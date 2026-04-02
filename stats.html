@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CinéJournal — 📊 Statistiques</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const savedMode = localStorage.getItem('cinejournal_mode') || 'dark';
+    const savedAmb = localStorage.getItem('cinejournal_ambiance') || 'classic';
+    document.documentElement.setAttribute('data-theme', savedMode);
+    document.documentElement.setAttribute('data-ambiance', savedAmb);
+  </script>
+</head>
+<body>
+
+  <!-- ── Navbar ── -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo" style="text-decoration:none;" title="Retour au Portail Maxime Chapman">
+      <span class="icon">🎞️</span> CinéJournal
+    </a>
+    <ul class="navbar-nav">
+      <li><a href="films.html">Mes Films</a></li>
+      <li><a href="favoris.html">❤️ Coups de cœur</a></li>
+      <li><a href="stats.html" class="active">📊 Statistiques</a></li>
+      <li><a href="settings.html">⚙️ Paramètres</a></li>
+    </ul>
+    <div class="navbar-actions">
+      <a href="add.html" class="btn-add-film">+ Ajouter un film</a>
+    </div>
+  </nav>
+
+  <!-- ── Structure ── -->
+  <main class="container page-stats" style="margin-top:2rem">
+    
+    <header class="page-header" style="text-align:center; padding: 2rem 0; border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom: 2rem;">
+      <h1 class="page-title" style="font-size:3rem; margin-bottom:0.5rem; background: var(--gold-gradient); -webkit-background-clip: text; background-clip: text; color: transparent;">Tableau de Bord</h1>
+      <p class="subtitle" style="font-size:1.1rem; color:var(--text-muted);">Analyse en profondeur de tes pépites et de ta consommation cinéma.</p>
+    </header>
+
+    <!-- Cartes KPI Key Performance Indicators -->
+    <div class="stats-kpis" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+       <div class="kpi-card" style="background:var(--bg-card); padding:2rem; border-radius:16px; border:1px solid rgba(255,255,255,0.05); text-align:center;">
+          <div style="font-size:2.5rem; margin-bottom:0.5rem">🍿</div>
+          <div id="kpi-total" style="font-size:2.5rem; font-weight:800; color:#fff">0</div>
+          <div style="color:var(--text-muted); font-size:0.9rem; letter-spacing:0.05em; text-transform:uppercase;">Films Visionnés</div>
+       </div>
+       <div class="kpi-card" style="background:var(--bg-card); padding:2rem; border-radius:16px; border:1px solid rgba(255,255,255,0.05); text-align:center;">
+          <div style="font-size:2.5rem; margin-bottom:0.5rem">⏱️</div>
+          <div id="kpi-time" style="font-size:2.5rem; font-weight:800; color:#fff">0<span style="font-size:1.2rem; color:var(--text-muted)">h</span></div>
+          <div style="color:var(--text-muted); font-size:0.9rem; letter-spacing:0.05em; text-transform:uppercase;">Temps total d'écran</div>
+       </div>
+       <div class="kpi-card" style="background:var(--bg-card); padding:2rem; border-radius:16px; border:1px solid rgba(255,255,255,0.05); text-align:center;">
+          <div style="font-size:2.5rem; margin-bottom:0.5rem">⭐️</div>
+          <div id="kpi-avg" style="font-size:2.5rem; font-weight:800; color:var(--gold)">0.0</div>
+          <div style="color:var(--text-muted); font-size:0.9rem; letter-spacing:0.05em; text-transform:uppercase;">Note moyenne (Cœur)</div>
+       </div>
+    </div>
+
+    <!-- Section Graphiques Complexes -->
+    <div class="stats-charts-grid" style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 4rem;">
+      
+      <!-- Graphique Radar (Critères) -->
+      <div class="chart-box" style="background:var(--bg-card); padding:2rem; border-radius:16px; border:1px solid rgba(255,255,255,0.05); display:flex; flex-direction:column; align-items:center;">
+        <h3 style="margin-top:0; font-size:1.2rem; color:#fff; align-self:flex-start;">Toile d'Araignée des Critères</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem; align-self:flex-start; margin-bottom:1.5rem;">C'est ici que tu es le plus sévère ou indulgent.</p>
+        <div style="width:100%; max-width:400px; aspect-ratio:1;">
+          <canvas id="radarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Graphique Doughnut (Genres) -->
+      <div class="chart-box" style="background:var(--bg-card); padding:2rem; border-radius:16px; border:1px solid rgba(255,255,255,0.05); display:flex; flex-direction:column; align-items:center;">
+        <h3 style="margin-top:0; font-size:1.2rem; color:#fff; align-self:flex-start;">Répartition par Genres</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem; align-self:flex-start; margin-bottom:1.5rem;">Plutôt drame, action ou sci-fi ?</p>
+        <div style="width:100%; max-width:400px; aspect-ratio:1;">
+           <canvas id="doughnutChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Graphique Barres (Distribution des Notes) -->
+      <div class="chart-box" style="background:var(--bg-card); padding:2rem; border-radius:16px; border:1px solid rgba(255,255,255,0.05); grid-column: span 2;">
+        <h3 style="margin-top:0; font-size:1.2rem; color:#fff;">Distribution de tes notes Pures 💖</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1.5rem;">Le nombre de films pour chaque palier de note sur 10.</p>
+        <div style="width:100%; height:300px;">
+           <canvas id="barChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="footer"><p>CinéJournal 2026 🎬</p></footer>
+
+  <script src="app.js"></script>
+  <script src="stats.js"></script>
+</body>
+</html>

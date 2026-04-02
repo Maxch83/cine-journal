@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paramètres TMDB — CinéJournal</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    const savedMode = localStorage.getItem('cinejournal_mode') || 'dark';
+    const savedAmb = localStorage.getItem('cinejournal_ambiance') || 'classic';
+    document.documentElement.setAttribute('data-theme', savedMode);
+    document.documentElement.setAttribute('data-ambiance', savedAmb);
+  </script>
+</head>
+<body class="settings-page">
+
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo" style="text-decoration:none;" title="Retour au Portail Maxime Chapman"><span class="icon">🎞️</span>CinéJournal</a>
+    <ul class="navbar-nav">
+      <li><a href="films.html">Mes Films</a></li>
+      <li><a href="favoris.html">❤️ Coups de cœur</a></li>
+      <li><a href="stats.html">📊 Statistiques</a></li>
+      <li><a href="settings.html" class="active">⚙️ Paramètres</a></li>
+    </ul>
+    <div class="navbar-year">2026</div>
+  </nav>
+
+  <div style="padding:6rem 2.5rem 4rem; max-width:700px; margin:0 auto;">
+
+    <h1 style="font-family:'Playfair Display',serif;font-size:2.2rem;color:#fff;margin-bottom:0.4rem;">
+      ⚙️ Paramètres
+    </h1>
+    <p style="color:var(--text-muted);margin-bottom:2.5rem;">Configure tes clés API : TMDB pour l'auto-remplissage des films, Gemini pour la génération de critiques par IA.</p>
+
+    <!-- ── THÈMES ET PERSONNALISATION ── -->
+    <div class="form-section-block" style="margin-bottom:2rem; border-color:var(--border);">
+      <div class="form-section-header">
+        <span class="form-section-icon">🎨</span>
+        <div>
+          <h2 class="form-section-title" style="color:var(--gold)">Thème & Apparence</h2>
+          <p class="form-section-desc">Personnalise l'interface de ton journal avec tes couleurs préférées.</p>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:1.5rem; margin-top:1rem;">
+        
+        <!-- Mode Sombre/Clair -->
+        <div>
+          <label style="display:block; color:var(--text); font-weight:600; margin-bottom:0.5rem;">Mode d'affichage</label>
+          <div style="display:flex; gap:1rem;">
+            <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; color:var(--text);">
+              <input type="radio" name="theme-mode" value="dark" style="accent-color:var(--gold);"> 🌙 Sombre
+            </label>
+            <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; color:var(--text);">
+              <input type="radio" name="theme-mode" value="light" style="accent-color:var(--gold);"> ☀️ Clair
+            </label>
+          </div>
+        </div>
+
+        <!-- Ambiance -->
+        <div>
+          <label style="display:block; color:var(--text); font-weight:600; margin-bottom:0.5rem;">Ambiance / Genre Cinématographique</label>
+          <div style="display:flex; flex-wrap:wrap; gap:1rem;">
+            <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; color:var(--text);">
+              <input type="radio" name="theme-ambiance" value="classic" style="accent-color:#c8a84b;">
+              <span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#c8a84b;"></span> Classique (Festival)
+            </label>
+            <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; color:var(--text);">
+              <input type="radio" name="theme-ambiance" value="scifi" style="accent-color:#00f3ff;">
+              <span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#00f3ff;"></span> Science-Fiction
+            </label>
+            <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; color:var(--text);">
+              <input type="radio" name="theme-ambiance" value="romance" style="accent-color:#f372a6;">
+              <span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#f372a6;"></span> Romance
+            </label>
+            <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; color:var(--text);">
+              <input type="radio" name="theme-ambiance" value="western" style="accent-color:#d35400;">
+              <span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#d35400;"></span> Western
+            </label>
+            <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem; color:var(--text);">
+              <input type="radio" name="theme-ambiance" value="horror" style="accent-color:#b71540;">
+              <span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#b71540;"></span> Horreur
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloc IA (GROQ) -->
+    <div class="form-section-block" style="margin-bottom:1.5rem;border-color:rgba(245,80,54,0.4)">
+      <div class="form-section-header">
+        <span class="form-section-icon">🧠</span>
+        <div>
+          <h2 class="form-section-title" style="color:#ff765e">Intelligence Artificielle (Groq / Llama 3)</h2>
+          <p class="form-section-desc">Génère tes critiques instantanément grâce à Llama 3. <strong>100% gratuit, sans carte bancaire, ultra-rapide.</strong> C'est la solution recommandée pour éviter les problèmes de quotas Google.</p>
+        </div>
+      </div>
+
+      <div class="steps-box" style="border-color:rgba(245,80,54,0.2); background:rgba(245,80,54,0.03)">
+        <h3 style="color:#ff765e;font-size:0.9rem;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1rem;">⚡️ Obtenir une clé Groq gratuitement (1 minute)</h3>
+        <ol class="steps-list">
+          <li>
+            <span class="step-num" style="background:#f55036">1</span>
+            <div>
+              <strong>Va sur la console Groq</strong><br>
+              <a href="https://console.groq.com/keys" target="_blank" class="steps-link" style="color:#ffaaa0">→ console.groq.com/keys</a>
+            </div>
+          </li>
+          <li>
+            <span class="step-num" style="background:#f55036">2</span>
+            <div>
+              <strong>Connecte-toi simplement</strong><br>
+              Utilise ton compte Google, GitHub ou Email.
+            </div>
+          </li>
+          <li>
+            <span class="step-num" style="background:#f55036">3</span>
+            <div>
+              <strong>Crée ta clé</strong><br>
+              Clique sur le bouton <em>"Create API Key"</em> et copie la clé (elle commence par <code style="color:#ffaaa0">gsk_...</code>).
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="field-group" style="margin-top:1.5rem">
+        <label class="field-label" for="groq-key-input">Ta clé API Groq</label>
+        <div class="dynamic-input-row">
+          <input type="password" id="groq-key-input" class="field-input" placeholder="gsk_..." autocomplete="off" spellcheck="false">
+          <button type="button" id="groq-toggle-vis" class="add-chip-btn" style="white-space:nowrap">👁️ Voir</button>
+        </div>
+        <div id="groq-status" class="tmdb-status" style="margin-top:0.8rem"></div>
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap">
+        <button id="groq-test-btn" class="btn-secondary">🔬 Tester la clé Groq</button>
+        <button id="groq-save-btn" class="btn-primary" style="background:linear-gradient(135deg,#f55036,#ff8a75);border:none;color:#fff;">💾 Sauvegarder</button>
+        <button id="groq-delete-btn" class="btn-danger" style="display:none">🗑️ Supprimer</button>
+      </div>
+    </div>
+
+
+
+    <!-- Bloc TMDB -->
+    <div class="form-section-block">
+      <div class="form-section-header">
+        <span class="form-section-icon">🗝️</span>
+        <div>
+          <h2 class="form-section-title">Clé API TMDB</h2>
+          <p class="form-section-desc">The Movie Database (TMDB) est gratuit. Crée un compte et génère une clé API pour activer la recherche automatique.</p>
+        </div>
+      </div>
+
+      <!-- Étapes pour obtenir une clé -->
+      <div class="steps-box">
+        <h3 style="color:var(--gold);font-size:0.9rem;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1rem;">Comment obtenir une clé gratuite ?</h3>
+        <ol class="steps-list">
+          <li>
+            <span class="step-num">1</span>
+            <div>
+              <strong>Crée un compte TMDB</strong><br>
+              <a href="https://www.themoviedb.org/signup" target="_blank" rel="noopener" class="steps-link">
+                → www.themoviedb.org/signup
+              </a>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <div>
+              <strong>Va dans les paramètres de ton compte</strong><br>
+              Profil → Paramètres → API
+            </div>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <div>
+              <strong>Crée une nouvelle application</strong><br>
+              Choisis "Développeur" → remplis le formulaire (usage personnel)
+            </div>
+          </li>
+          <li>
+            <span class="step-num">4</span>
+            <div>
+              <strong>Copie ta clé API (v3 auth)</strong><br>
+              Elle ressemble à : <code style="color:var(--gold);font-size:0.85rem;">a1b2c3d4e5f6…</code>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <!-- Input clé -->
+      <div class="field-group" style="margin-top:1.5rem">
+        <label class="field-label" for="tmdb-key-input">Ta clé API TMDB (v3)</label>
+        <div class="dynamic-input-row">
+          <input type="password" id="tmdb-key-input" class="field-input" placeholder="Colle ta clé API ici…" autocomplete="off" spellcheck="false">
+          <button type="button" id="toggle-key-vis" class="add-chip-btn" style="white-space:nowrap">👁️ Voir</button>
+        </div>
+        <div id="key-status" class="tmdb-status" style="margin-top:0.8rem"></div>
+      </div>
+
+      <div style="display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap">
+        <button id="test-key-btn" class="btn-secondary">🔬 Tester la connexion</button>
+        <button id="save-key-btn" class="btn-primary">💾 Sauvegarder la clé</button>
+        <button id="delete-key-btn" class="btn-danger" style="display:none">🗑️ Supprimer la clé</button>
+      </div>
+    </div>
+
+    <!-- Bloc OMDb -->
+    <div class="form-section-block" style="margin-bottom:1.5rem;border-color:rgba(46,204,113,0.3)">
+      <div class="form-section-header">
+        <span class="form-section-icon">🍅</span>
+        <div>
+          <h2 class="form-section-title" style="color:#2ecc71">Clé API OMDb (IMDb & Rotten Tomatoes)</h2>
+          <p class="form-section-desc">Récupère les notes officielles IMDb et Rotten Tomatoes sur les pages des films.</p>
+        </div>
+      </div>
+
+      <div class="steps-box" style="border-color:rgba(46,204,113,0.2); background:rgba(46,204,113,0.03)">
+        <h3 style="color:#2ecc71;font-size:0.9rem;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1rem;">⚡️ Obtenir une clé OMDb (Gratuit)</h3>
+        <ol class="steps-list">
+          <li>
+            <span class="step-num" style="background:#2ecc71">1</span>
+            <div>
+              <strong>Va sur OMDb API</strong><br>
+              <a href="https://www.omdbapi.com/apikey.aspx" target="_blank" class="steps-link" style="color:#2ecc71">→ omdbapi.com/apikey.aspx</a>
+            </div>
+          </li>
+          <li>
+            <span class="step-num" style="background:#2ecc71">2</span>
+            <div>
+              <strong>Souscris à l'offre gratuite (FREE)</strong><br>
+              Entre ton email et valide. Tu recevras un lien d'activation par email avec ta clé.
+            </div>
+          </li>
+          <li>
+            <span class="step-num" style="background:#2ecc71">3</span>
+            <div>
+              <strong>Copie ta clé API</strong><br>
+              Elle ressemble à : <code style="color:#2ecc71;font-size:0.85rem;">ab1234c...</code>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="field-group" style="margin-top:1.5rem">
+        <label class="field-label" for="omdb-key-input">Ta clé API OMDb</label>
+        <div class="dynamic-input-row">
+          <input type="password" id="omdb-key-input" class="field-input" placeholder="Colle ta clé API ici…" autocomplete="off" spellcheck="false">
+          <button type="button" id="omdb-toggle-vis" class="add-chip-btn" style="white-space:nowrap">👁️ Voir</button>
+        </div>
+        <div id="omdb-status" class="tmdb-status" style="margin-top:0.8rem"></div>
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap">
+        <button id="omdb-test-btn" class="btn-secondary">🔬 Tester la clé OMDb</button>
+        <button id="omdb-save-btn" class="btn-primary" style="background:linear-gradient(135deg,#27ae60,#2ecc71)">💾 Sauvegarder</button>
+        <button id="omdb-delete-btn" class="btn-danger" style="display:none">🗑️ Supprimer</button>
+      </div>
+    </div>
+
+    <!-- Bloc NASA -->
+    <div class="form-section-block" style="margin-bottom:1.5rem;border-color:rgba(0,168,255,0.3)">
+      <div class="form-section-header">
+        <span class="form-section-icon">🚀</span>
+        <div>
+          <h2 class="form-section-title" style="color:#00a8ff">Clé API NASA (AstroBoard)</h2>
+          <p class="form-section-desc">Optionnel. Sans clé, <code>DEMO_KEY</code> est utilisé (limité à ~30 req/h). Obtiens une clé gratuite pour un accès illimité.</p>
+        </div>
+      </div>
+      <div class="steps-box" style="border-color:rgba(0,168,255,0.2); background:rgba(0,168,255,0.03)">
+        <ol class="steps-list">
+          <li>
+            <span class="step-num" style="background:#00a8ff">1</span>
+            <div><strong>Va sur</strong> <a href="https://api.nasa.gov/#signUp" target="_blank" class="steps-link" style="color:#00a8ff">→ api.nasa.gov/#signUp</a></div>
+          </li>
+          <li>
+            <span class="step-num" style="background:#00a8ff">2</span>
+            <div><strong>Remplis le formulaire</strong> (prénom, nom, email). Tu reçois ta clé immédiatement.</div>
+          </li>
+        </ol>
+      </div>
+      <div class="field-group" style="margin-top:1.5rem">
+        <label class="field-label" for="nasa-key-input">Ta clé API NASA</label>
+        <div class="dynamic-input-row">
+          <input type="password" id="nasa-key-input" class="field-input" placeholder="DEMO_KEY (par défaut)" autocomplete="off" spellcheck="false">
+          <button type="button" id="nasa-toggle-vis" class="add-chip-btn" style="white-space:nowrap">👁️ Voir</button>
+        </div>
+        <div id="nasa-status" class="tmdb-status" style="margin-top:0.8rem"></div>
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap">
+        <button id="nasa-save-btn" class="btn-primary" style="background:linear-gradient(135deg,#0070d8,#00a8ff);border:none;color:#fff;">💾 Sauvegarder</button>
+        <button id="nasa-delete-btn" class="btn-danger" style="display:none">🗑️ Supprimer</button>
+      </div>
+    </div>
+
+    <!-- Bloc info nominaux -->
+    <div class="form-section-block" style="margin-top:1.5rem">
+      <div class="form-section-header">
+        <span class="form-section-icon">👤</span>
+        <div>
+          <h2 class="form-section-title">Mon profil</h2>
+          <p class="form-section-desc">Personnalise ton journal.</p>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="auteur-name">Ton prénom (affiché dans les critiques)</label>
+        <input type="text" id="auteur-name" class="field-input" placeholder="Ex: Lucas">
+      </div>
+      <div class="field-group" style="margin-top:1rem">
+        <label class="field-label" for="auteur-emoji">Ton emoji avatar</label>
+        <input type="text" id="auteur-emoji" class="field-input emoji-input" placeholder="🎬" maxlength="4">
+      </div>
+      <button id="save-profile-btn" class="btn-primary" style="margin-top:1rem">💾 Sauvegarder le profil</button>
+    </div>
+
+    <!-- Bloc données -->
+    <div class="form-section-block" style="margin-top:1.5rem;border-color:rgba(224,82,82,0.3)">
+      <div class="form-section-header">
+        <span class="form-section-icon">⚠️</span>
+        <div>
+          <h2 class="form-section-title" style="color:#e05252">Zone de danger</h2>
+          <p class="form-section-desc">Actions irréversibles sur tes données.</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap">
+        <button id="export-btn" class="btn-secondary">📤 Exporter mes films (JSON)</button>
+        <button id="reset-btn" class="btn-danger">🔄 Réinitialiser les données</button>
+      </div>
+      <p style="color:var(--text-muted);font-size:0.8rem;margin-top:0.8rem">
+        La réinitialisation supprime tous tes films et recharge les données d'exemple.
+      </p>
+    </div>
+
+    <div style="margin-top:2rem">
+      <a href="films.html" class="detail-back">← Retour aux films</a>
+    </div>
+  </div>
+
+  <footer class="footer"><p>CinéJournal 2026 🎬</p></footer>
+
+  <script src="app.js"></script>
+  <script>
+    const keyInput = document.getElementById('tmdb-key-input');
+    const keyStatus = document.getElementById('key-status');
+    const saveBtn = document.getElementById('save-key-btn');
+    const testBtn = document.getElementById('test-key-btn');
+    const deleteBtn = document.getElementById('delete-key-btn');
+    const toggleVis = document.getElementById('toggle-key-vis');
+
+    // Pré-remplir si clé existante
+    const existingKey = TMDB.getKey();
+    if (existingKey) {
+      keyInput.value = existingKey;
+      deleteBtn.style.display = 'inline-flex';
+      keyStatus.innerHTML = '✅ Clé API configurée.';
+      keyStatus.className = 'tmdb-status ok';
+    }
+
+    // Voir/cacher la clé
+    toggleVis.addEventListener('click', () => {
+      keyInput.type = keyInput.type === 'password' ? 'text' : 'password';
+      toggleVis.textContent = keyInput.type === 'password' ? '👁️ Voir' : '🙈 Cacher';
+    });
+
+    // Sauvegarder
+    saveBtn.addEventListener('click', () => {
+      const k = keyInput.value.trim();
+      if (!k) { keyStatus.innerHTML = '❌ Clé vide.'; keyStatus.className = 'tmdb-status error'; return; }
+      TMDB.setKey(k);
+      deleteBtn.style.display = 'inline-flex';
+      keyStatus.innerHTML = '✅ Clé sauvegardée !';
+      keyStatus.className = 'tmdb-status ok';
+    });
+
+    // Tester
+    testBtn.addEventListener('click', async () => {
+      const k = keyInput.value.trim();
+      if (!k) { keyStatus.innerHTML = '❌ Clé vide.'; keyStatus.className = 'tmdb-status error'; return; }
+      keyStatus.innerHTML = '⏳ Test en cours…'; keyStatus.className = 'tmdb-status loading';
+      try {
+        TMDB.setKey(k);
+        const res = await TMDB.search('Inception');
+        if (res.length > 0) {
+          keyStatus.innerHTML = `✅ Connexion OK ! ${res.length} résultats pour "Inception".`;
+          keyStatus.className = 'tmdb-status ok';
+        } else {
+          keyStatus.innerHTML = '⚠️ Connexion OK mais aucun résultat.';
+          keyStatus.className = 'tmdb-status warn';
+        }
+      } catch {
+        keyStatus.innerHTML = '❌ Clé invalide ou erreur réseau.';
+        keyStatus.className = 'tmdb-status error';
+      }
+    });
+
+    // Supprimer
+    deleteBtn.addEventListener('click', () => {
+      localStorage.removeItem(CONFIG.TMDB_KEY_STORAGE);
+      keyInput.value = '';
+      deleteBtn.style.display = 'none';
+      keyStatus.innerHTML = 'Clé supprimée.'; keyStatus.className = 'tmdb-status';
+    });
+
+    // Profil
+    const profName = document.getElementById('auteur-name');
+    const profEmoji = document.getElementById('auteur-emoji');
+    const existingName = localStorage.getItem('cinejournal_auteur');
+    const existingEmoji = localStorage.getItem('cinejournal_emoji');
+    if (existingName) profName.value = existingName;
+    if (existingEmoji) profEmoji.value = existingEmoji;
+
+    document.getElementById('save-profile-btn').addEventListener('click', () => {
+      localStorage.setItem('cinejournal_auteur', profName.value.trim() || 'Moi');
+      localStorage.setItem('cinejournal_emoji', profEmoji.value.trim() || '🎬');
+      alert('✅ Profil sauvegardé !');
+    });
+
+    // Export
+    document.getElementById('export-btn').addEventListener('click', () => {
+      const films = chargerFilms();
+      const blob = new Blob([JSON.stringify(films, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `cinejournal_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+    });
+
+    // Reset
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      if (confirm('⚠️ Réinitialiser tous les films ? Cette action est irréversible.')) {
+        localStorage.removeItem(CONFIG.STORAGE_KEY);
+        alert('✅ Données réinitialisées. Les films exemples seront rechargés.');
+        window.location.href = 'index.html';
+      }
+    });
+    // ── Groq Key (IA) ──
+    const groqInput = document.getElementById('groq-key-input');
+    const groqStatus = document.getElementById('groq-status');
+    const groqSave = document.getElementById('groq-save-btn');
+    const groqTest = document.getElementById('groq-test-btn');
+    const groqDelete = document.getElementById('groq-delete-btn');
+    const groqToggle = document.getElementById('groq-toggle-vis');
+    const existingGroq = localStorage.getItem('cinejournal_groq_key');
+
+    if (existingGroq) {
+      groqInput.value = existingGroq;
+      groqDelete.style.display = 'inline-flex';
+      groqStatus.innerHTML = '✅ Clé Groq configurée.';
+      groqStatus.className = 'tmdb-status ok';
+    }
+
+    groqToggle.addEventListener('click', () => {
+      groqInput.type = groqInput.type === 'password' ? 'text' : 'password';
+      groqToggle.textContent = groqInput.type === 'password' ? '👁️ Voir' : '🙈 Cacher';
+    });
+
+    groqSave.addEventListener('click', () => {
+      const k = groqInput.value.trim();
+      if (!k) { groqStatus.innerHTML = '❌ Clé vide.'; groqStatus.className = 'tmdb-status error'; return; }
+      if (!k.startsWith('gsk_')) { groqStatus.innerHTML = '⚠️ Une clé Groq commence par "gsk_". Es-tu sûr ?'; groqStatus.className = 'tmdb-status warn'; }
+      
+      localStorage.setItem('cinejournal_groq_key', k);
+      groqDelete.style.display = 'inline-flex';
+      if(k.startsWith('gsk_')) {
+        groqStatus.innerHTML = '✅ Clé Groq sauvegardée !';
+        groqStatus.className = 'tmdb-status ok';
+      }
+    });
+
+    groqTest.addEventListener('click', async () => {
+      const k = groqInput.value.trim();
+      if (!k) { groqStatus.innerHTML = '❌ Clé vide.'; groqStatus.className = 'tmdb-status error'; return; }
+      groqStatus.innerHTML = '⏳ Test en cours sur le modèle Llama 3…'; groqStatus.className = 'tmdb-status loading';
+      
+      try {
+        const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${k}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: [{ role: 'user', content: 'Dis ok.' }],
+            max_tokens: 10
+          })
+        });
+        
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        
+        if (d.choices?.[0]) { 
+          groqStatus.innerHTML = '✅ IA Llama 3 opérationnelle ! Ultra rapide.'; 
+          groqStatus.className = 'tmdb-status ok'; 
+        } else { 
+          groqStatus.innerHTML = '⚠️ Réponse inattendue.'; 
+          groqStatus.className = 'tmdb-status warn'; 
+        }
+      } catch { 
+        groqStatus.innerHTML = '❌ Clé invalide. Copie bien toute la clé "gsk_...".'; 
+        groqStatus.className = 'tmdb-status error'; 
+      }
+    });
+
+    groqDelete.addEventListener('click', () => {
+      localStorage.removeItem('cinejournal_groq_key');
+      groqInput.value = '';
+      groqDelete.style.display = 'none';
+      groqStatus.innerHTML = 'Clé supprimée.'; groqStatus.className = 'tmdb-status';
+    });
+    // ── OMDb Key (Notes externes) ──
+    const omdbInput = document.getElementById('omdb-key-input');
+    const omdbStatus = document.getElementById('omdb-status');
+    const omdbSave = document.getElementById('omdb-save-btn');
+    const omdbTest = document.getElementById('omdb-test-btn');
+    const omdbDelete = document.getElementById('omdb-delete-btn');
+    const omdbToggle = document.getElementById('omdb-toggle-vis');
+    const existingOmdb = localStorage.getItem('cinejournal_omdb_key');
+
+    if (existingOmdb) {
+      omdbInput.value = existingOmdb;
+      omdbDelete.style.display = 'inline-flex';
+      omdbStatus.innerHTML = '✅ Clé OMDb configurée.';
+      omdbStatus.className = 'tmdb-status ok';
+    }
+
+    omdbToggle.addEventListener('click', () => {
+      omdbInput.type = omdbInput.type === 'password' ? 'text' : 'password';
+      omdbToggle.textContent = omdbInput.type === 'password' ? '👁️ Voir' : '🙈 Cacher';
+    });
+
+    omdbSave.addEventListener('click', () => {
+      const k = omdbInput.value.trim();
+      if (!k) { omdbStatus.innerHTML = '❌ Clé vide.'; omdbStatus.className = 'tmdb-status error'; return; }
+      
+      localStorage.setItem('cinejournal_omdb_key', k);
+      omdbDelete.style.display = 'inline-flex';
+      omdbStatus.innerHTML = '✅ Clé OMDb sauvegardée !';
+      omdbStatus.className = 'tmdb-status ok';
+    });
+
+    omdbTest.addEventListener('click', async () => {
+      const k = omdbInput.value.trim();
+      if (!k) { omdbStatus.innerHTML = '❌ Clé vide.'; omdbStatus.className = 'tmdb-status error'; return; }
+      omdbStatus.innerHTML = '⏳ Test en cours sur OMDb…'; omdbStatus.className = 'tmdb-status loading';
+      
+      try {
+        const r = await fetch(`https://www.omdbapi.com/?apikey=${k}&t=Inception`);
+        const d = await r.json();
+        
+        if (d.Response === "True") { 
+          omdbStatus.innerHTML = '✅ API OMDb opérationnelle (Inception trouvé) !'; 
+          omdbStatus.className = 'tmdb-status ok'; 
+        } else { 
+          omdbStatus.innerHTML = `❌ Erreur : ${d.Error}`; 
+          omdbStatus.className = 'tmdb-status error'; 
+        }
+      } catch { 
+        omdbStatus.innerHTML = '❌ Erreur réseau. Vérifie ta connexion ou la clé.'; 
+        omdbStatus.className = 'tmdb-status error'; 
+      }
+    });
+
+    omdbDelete.addEventListener('click', () => {
+      localStorage.removeItem('cinejournal_omdb_key');
+      omdbInput.value = '';
+      omdbDelete.style.display = 'none';
+      omdbStatus.innerHTML = 'Clé supprimée.'; omdbStatus.className = 'tmdb-status';
+    });
+
+    // ── NASA Key ──
+    const nasaInput = document.getElementById('nasa-key-input');
+    const nasaStatus = document.getElementById('nasa-status');
+    const nasaSave = document.getElementById('nasa-save-btn');
+    const nasaDelete = document.getElementById('nasa-delete-btn');
+    const nasaToggle = document.getElementById('nasa-toggle-vis');
+    const existingNasa = localStorage.getItem('cinejournal_nasa_key');
+
+    if (existingNasa) {
+      nasaInput.value = existingNasa;
+      nasaDelete.style.display = 'inline-flex';
+      nasaStatus.innerHTML = '✅ Clé NASA configurée.';
+      nasaStatus.className = 'tmdb-status ok';
+    }
+
+    nasaToggle.addEventListener('click', () => {
+      nasaInput.type = nasaInput.type === 'password' ? 'text' : 'password';
+      nasaToggle.textContent = nasaInput.type === 'password' ? '👁️ Voir' : '🙈 Cacher';
+    });
+
+    nasaSave.addEventListener('click', () => {
+      const k = nasaInput.value.trim();
+      if (!k) { nasaStatus.innerHTML = '❌ Clé vide.'; nasaStatus.className = 'tmdb-status error'; return; }
+      localStorage.setItem('cinejournal_nasa_key', k);
+      nasaDelete.style.display = 'inline-flex';
+      nasaStatus.innerHTML = '✅ Clé NASA sauvegardée !';
+      nasaStatus.className = 'tmdb-status ok';
+    });
+
+    nasaDelete.addEventListener('click', () => {
+      localStorage.removeItem('cinejournal_nasa_key');
+      nasaInput.value = '';
+      nasaDelete.style.display = 'none';
+      nasaStatus.innerHTML = 'Clé supprimée (DEMO_KEY utilisée).';
+      nasaStatus.className = 'tmdb-status';
+    });
+
+    // ── THÈME & PERSONNALISATION ──
+    const modeRadios = document.querySelectorAll('input[name="theme-mode"]');
+    const ambRadios = document.querySelectorAll('input[name="theme-ambiance"]');
+
+    // Init UI from storage
+    if (savedMode) {
+      const r = document.querySelector(`input[name="theme-mode"][value="${savedMode}"]`);
+      if (r) r.checked = true;
+    }
+    if (savedAmb) {
+      const r = document.querySelector(`input[name="theme-ambiance"][value="${savedAmb}"]`);
+      if (r) r.checked = true;
+    } else {
+      document.querySelector(`input[name="theme-ambiance"][value="classic"]`).checked = true;
+    }
+
+    // Handlers
+    modeRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const val = e.target.value;
+        document.documentElement.setAttribute('data-theme', val);
+        localStorage.setItem('cinejournal_mode', val);
+      });
+    });
+
+    ambRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const val = e.target.value;
+        document.documentElement.setAttribute('data-ambiance', val);
+        localStorage.setItem('cinejournal_ambiance', val);
+      });
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajouter un film — CinéJournal</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    const savedMode = localStorage.getItem('cinejournal_mode') || 'dark';
+    const savedAmb = localStorage.getItem('cinejournal_ambiance') || 'classic';
+    document.documentElement.setAttribute('data-theme', savedMode);
+    document.documentElement.setAttribute('data-ambiance', savedAmb);
+  </script>
+</head>
+<body class="add-page">
+
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo" style="text-decoration:none;" title="Retour au Portail Maxime Chapman"><span class="icon">🎞️</span>CinéJournal</a>
+    <ul class="navbar-nav">
+      <li><a href="films.html">Mes Films</a></li>
+      <li><a href="favoris.html">❤️ Coups de cœur</a></li>
+      <li><a href="stats.html">📊 Statistiques</a></li>
+      <li><a href="settings.html">⚙️ Paramètres</a></li>
+    </ul>
+    <div class="navbar-year">2026</div>
+  </nav>
+
+  <!-- Loading TMDB -->
+  <div id="tmdb-loading" class="tmdb-loading-overlay" style="display:none">
+    <div class="tmdb-loading-box">
+      <div class="loading-spinner"></div>
+      <p>Chargement TMDB…</p>
+    </div>
+  </div>
+
+  <!-- Header page -->
+  <div class="add-page-header">
+    <div class="add-page-header-inner">
+      <a href="films.html" class="detail-back">← Retour aux films</a>
+      <h1 class="add-page-title" id="page-title">🎬 Ajouter un film</h1>
+      <p class="add-page-sub">Utilise la recherche TMDB pour auto-remplir, puis note chaque aspect et génère ta critique avec l'IA.</p>
+    </div>
+  </div>
+
+  <!-- Bannières API -->
+  <div id="tmdb-key-banner" class="api-banner tmdb-banner-color" style="display:none">
+    <span>🔍 <strong>TMDB non configuré</strong> — active l'auto-remplissage des films.</span>
+    <a href="settings.html" class="api-banner-btn">Configurer →</a>
+  </div>
+  <div id="gemini-key-banner" class="api-banner gemini-banner-color" style="display:none">
+    <span>🧠 <strong>IA Groq / Llama non configurée</strong> — active la génération automatique de critiques (100% gratuit).</span>
+    <a href="settings.html" class="api-banner-btn">Obtenir ma clé →</a>
+  </div>
+
+  <div class="add-form-container" id="form-section">
+    <form id="add-film-form" novalidate>
+
+      <!-- ══ 1. RECHERCHE TMDB ══════════════════════ -->
+      <div class="form-section-block tmdb-section">
+        <div class="form-section-header">
+          <span class="form-section-icon">🔍</span>
+          <div>
+            <h2 class="form-section-title">Recherche automatique</h2>
+            <p class="form-section-desc">Tape le titre — les infos s'auto-remplissent via TMDB.</p>
+          </div>
+        </div>
+        <div class="tmdb-search-wrap">
+          <div class="field-group" style="position:relative">
+            <label class="field-label" for="tmdb-search">Rechercher un film</label>
+            <input type="search" id="tmdb-search" class="field-input tmdb-search-input"
+              placeholder="Ex: Inception, Dune, The Godfather…" autocomplete="off">
+            <div id="tmdb-dropdown" class="tmdb-dropdown" style="display:none"></div>
+          </div>
+          <div id="tmdb-status" class="tmdb-status"></div>
+        </div>
+      </div>
+
+      <!-- Images TMDB -->
+      <div id="tmdb-images-section" class="form-section-block" style="display:none">
+        <div class="form-section-header">
+          <span class="form-section-icon">🖼️</span>
+          <div>
+            <h2 class="form-section-title">Images du film</h2>
+            <p class="form-section-desc">Sélectionne les images à afficher dans la fiche (clic pour sélectionner/désélectionner).</p>
+          </div>
+        </div>
+        <div class="tmdb-images-grid" id="tmdb-images-grid"></div>
+        <p class="field-hint" style="margin-top:0.5rem">Les images avec un ✓ seront sauvegardées dans la fiche du film.</p>
+      </div>
+
+      <!-- ══ 2. INFOS DU FILM ═══════════════════════ -->
+      <div class="form-section-block">
+        <div class="form-section-header">
+          <span class="form-section-icon">🎥</span>
+          <div>
+            <h2 class="form-section-title">Informations du film</h2>
+            <p class="form-section-desc">Auto-rempli par TMDB — modifiable à tout moment.</p>
+          </div>
+        </div>
+        <div class="fields-grid">
+          <div class="field-group field-span-2">
+            <label class="field-label required" for="titre">Titre français</label>
+            <input type="text" id="titre" class="field-input" placeholder="Ex: Dune : Deuxième Partie" required>
+          </div>
+          <div class="field-group field-span-2">
+            <label class="field-label" for="titre_original">Titre original</label>
+            <input type="text" id="titre_original" class="field-input" placeholder="Ex: Dune: Part Two">
+          </div>
+          <div class="field-group field-span-2">
+            <label class="field-label" for="realisateur">Réalisateur(trice)</label>
+            <input type="text" id="realisateur" class="field-input" placeholder="Ex: Denis Villeneuve">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="annee">Année</label>
+            <input type="number" id="annee" class="field-input" placeholder="2024" min="1900" max="2030">
+          </div>
+          <div class="field-group field-span-2">
+            <label class="field-label" for="genre">Genre(s)</label>
+            <input type="text" id="genre" class="field-input" placeholder="Science-Fiction / Drame">
+            <span class="field-hint">Sépare par " / "</span>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="duree">Durée</label>
+            <input type="text" id="duree" class="field-input" placeholder="166 min">
+          </div>
+          <div class="field-group field-span-2">
+            <label class="field-label" for="nationalite">Nationalité</label>
+            <input type="text" id="nationalite" class="field-input" placeholder="🇫🇷 France">
+          </div>
+          <div class="field-group field-span-3">
+            <label class="field-label" for="affiche">URL de l'affiche</label>
+            <input type="url" id="affiche" class="field-input" placeholder="https://image.tmdb.org/…">
+          </div>
+          <div class="field-group affiche-preview-wrap">
+            <div class="affiche-preview" id="affiche-preview">
+              <img id="affiche-img" src="" alt="" style="display:none; width:100%; border-radius:8px;">
+              <div id="affiche-placeholder" class="affiche-placeholder"><span>🎬</span><small>Aperçu</small></div>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="emoji">Emoji (fallback)</label>
+            <input type="text" id="emoji" class="field-input emoji-input" placeholder="🎬" maxlength="4">
+          </div>
+        </div>
+        <div class="field-group" style="margin-top:1rem">
+          <label class="field-label">Acteurs principaux</label>
+          <div class="dynamic-input-row">
+            <input type="text" id="acteur-input" class="field-input" placeholder="Ex: Timothée Chalamet">
+            <button type="button" id="acteur-add-btn" class="add-chip-btn">+ Ajouter</button>
+          </div>
+          <div class="dynamic-chips" id="acteurs-chips"></div>
+        </div>
+        <div class="field-group" style="margin-top:1rem">
+          <label class="field-label" for="synopsis">Synopsis</label>
+          <textarea id="synopsis" class="field-input field-textarea" rows="3" placeholder="Résumé du film…"></textarea>
+        </div>
+      </div>
+
+      <!-- ══ 3. MON EXPÉRIENCE ══════════════════════ -->
+      <div class="form-section-block">
+        <div class="form-section-header">
+          <span class="form-section-icon">📅</span>
+          <div>
+            <h2 class="form-section-title">Contexte de visionnage</h2>
+            <p class="form-section-desc">Quand, où et avec qui l'as-tu vu ?</p>
+          </div>
+        </div>
+        <div class="fields-grid">
+          <div class="field-group field-span-2">
+            <label class="field-label required" for="dateVu">Date de visionnage</label>
+            <input type="date" id="dateVu" class="field-input" required>
+          </div>
+          <div class="field-group field-span-2">
+            <label class="field-label" for="contexte">Contexte</label>
+            <div class="select-wrap">
+              <select id="contexte" class="field-input field-select">
+                <option value="cinéma">🎭 Cinéma</option>
+                <option value="streaming">📺 Streaming</option>
+                <option value="chez-moi">🏠 Chez moi (DVD/Blu-ray)</option>
+                <option value="plein-air">🌙 Cinéma en plein air</option>
+                <option value="autre">✨ Autre</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group field-span-2">
+            <label class="field-label" for="aveqQui">Avec qui ?</label>
+            <div class="select-wrap">
+              <select id="aveqQui" class="field-input field-select">
+                <option value="seul">🧍 Seul(e)</option>
+                <option value="amis">👥 Avec des amis</option>
+                <option value="famille">👨‍👩‍👧 En famille</option>
+                <option value="date">💑 En couple</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ 4. NOTES PAR CRITÈRE ═══════════════════ -->
+      <div class="form-section-block criteres-section">
+        <div class="form-section-header">
+          <span class="form-section-icon">⭐</span>
+          <div>
+            <h2 class="form-section-title">Notes par critère</h2>
+            <p class="form-section-desc">Note chaque aspect de 0 à 10 (par demi-point). La note finale est calculée automatiquement.</p>
+          </div>
+        </div>
+
+        <div class="criteres-grid" id="criteres-grid">
+          <!-- Généré par JS -->
+        </div>
+
+        <!-- Note finale calculée -->
+        <div class="note-finale-block">
+          <div class="note-finale-row">
+            <div>
+              <div class="note-finale-title">Note technique</div>
+              <div class="note-finale-sub">Moyenne calculée des 8 critères</div>
+            </div>
+            <div class="note-finale-display">
+              <div class="note-circle-big" id="note-calc-circle">
+                <span id="note-calc-val">—</span>
+                <span class="note-denom">/10</span>
+              </div>
+              <div class="half-stars-row" id="note-calc-stars">
+                <span class="hs-empty">★</span><span class="hs-empty">★</span>
+                <span class="hs-empty">★</span><span class="hs-empty">★</span><span class="hs-empty">★</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ 5. NOTE DU CŒUR ════════════════════════ -->
+      <div class="form-section-block coeur-section">
+        <div class="form-section-header">
+          <span class="form-section-icon">❤️</span>
+          <div>
+            <h2 class="form-section-title">Note du cœur</h2>
+            <p class="form-section-desc">Ta note purement subjective et émotionnelle — indépendante de la technique.</p>
+          </div>
+        </div>
+
+        <div class="coeur-rating">
+          <div class="half-stars-row coeur-stars-big" id="coeur-stars">
+            <span class="hs-empty">★</span><span class="hs-empty">★</span>
+            <span class="hs-empty">★</span><span class="hs-empty">★</span><span class="hs-empty">★</span>
+          </div>
+          <div class="note-slider-wrap">
+            <span class="note-min">0</span>
+            <input type="range" id="coeur-slider" class="note-slider" min="0" max="10" step="0.5" value="0">
+            <span class="note-max">10</span>
+          </div>
+          <div class="coeur-display">
+            <div class="note-circle-big coeur-circle-color">
+              <span id="coeur-val">0</span>
+              <span class="note-denom">/10</span>
+            </div>
+            <div id="coeur-label-text" class="note-label-text">Déplace le curseur…</div>
+          </div>
+        </div>
+
+        <!-- Coup de cœur toggle -->
+        <div class="coup-coeur-wrap">
+          <label class="coup-coeur-label" for="coup-coeur">
+            <input type="checkbox" id="coup-coeur" class="coup-coeur-checkbox">
+            <span class="coup-coeur-toggle"></span>
+            <span class="coup-coeur-text">
+              ❤️ <strong>Coup de cœur</strong>
+              <small>Ce film t'a particulièrement marqué</small>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ══ 6. MA CRITIQUE (IA) ════════════════════ -->
+      <div class="form-section-block ia-section">
+        <div class="form-section-header">
+          <span class="form-section-icon">✍️</span>
+          <div>
+            <h2 class="form-section-title">Ma critique</h2>
+            <p class="form-section-desc">Réponds aux questions ci-dessous — l'IA Gemini génère une critique personnalisée et unique à partir de TES réponses.</p>
+          </div>
+        </div>
+
+        <!-- Questionnaire -->
+        <div class="questionnaire" id="questionnaire">
+          <!-- Généré par JS -->
+        </div>
+
+        <!-- Bouton générer -->
+        <div class="ia-generate-bar">
+          <button type="button" id="generer-btn" class="btn-ia">
+            <span class="ia-btn-icon">✨</span>
+            Générer ma critique avec l'IA
+          </button>
+          <span class="ia-hint">Basé sur tes réponses, tes notes et le film</span>
+        </div>
+
+        <!-- Loading IA -->
+        <div id="ia-loading" class="ia-loading" style="display:none">
+          <div class="loading-spinner"></div>
+          <div>
+            <strong>L'IA analyse tes réponses…</strong>
+            <p>Génération d'une critique personnalisée</p>
+          </div>
+        </div>
+
+        <!-- Erreur IA (affichée si problème) -->
+        <div id="ia-error-msg" class="ia-error-box" style="display:none"></div>
+
+        <div id="critique-result" class="critique-result" style="display:none">
+          <div class="critique-result-header">
+            <span>✅ Critique générée — tu peux la modifier librement</span>
+            <button type="button" id="regenerer-btn" class="btn-regen">🔄 Regénérer</button>
+          </div>
+          <textarea id="critique" class="field-input field-textarea field-textarea-lg" rows="9"
+            placeholder="Ta critique apparaîtra ici…"></textarea>
+          <div class="field-hint critique-counter">
+            <span id="critique-count">0</span> caractères
+          </div>
+        </div>
+
+        <!-- Mode sans IA : écrire manuellement -->
+        <div class="manuel-section">
+          <button type="button" class="btn-manuel-toggle" onclick="toggleManuel()">
+            ✏️ Écrire manuellement (sans IA)
+          </button>
+          <div id="critique-manuel" style="display:none; margin-top:1rem">
+            <textarea id="critique-manuel-text" class="field-input field-textarea field-textarea-lg" rows="8"
+              placeholder="Écris ta critique directement ici…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ 7. TAGS ════════════════════════════════ -->
+      <div class="form-section-block">
+        <div class="form-section-header">
+          <span class="form-section-icon">🏷️</span>
+          <div>
+            <h2 class="form-section-title">Tags personnels</h2>
+            <p class="form-section-desc">Mots-clés pour retrouver facilement ce film.</p>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="dynamic-input-row">
+            <input type="text" id="tag-input" class="field-input" placeholder="chef-d'œuvre, été, famille…">
+            <button type="button" id="tag-add-btn" class="add-chip-btn">+ Tag</button>
+          </div>
+          <div class="dynamic-chips" id="tags-chips"></div>
+          <div class="tag-suggestions">
+            <span class="tag-sug-label">Suggestions :</span>
+            <button type="button" class="tag-sug" onclick="ajouterTagSuggere('chef-d\'oeuvre')">chef-d'œuvre</button>
+            <button type="button" class="tag-sug" onclick="ajouterTagSuggere('must-see')">must-see</button>
+            <button type="button" class="tag-sug" onclick="ajouterTagSuggere('ciné')">ciné</button>
+            <button type="button" class="tag-sug" onclick="ajouterTagSuggere('décevant')">décevant</button>
+            <button type="button" class="tag-sug" onclick="ajouterTagSuggere('feel-good')">feel-good</button>
+            <button type="button" class="tag-sug" onclick="ajouterTagSuggere('intense')">intense</button>
+            <button type="button" class="tag-sug" onclick="ajouterTagSuggere('classique')">classique</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ BOUTONS SOUMISSION ═════════════════════ -->
+      <div class="form-actions">
+        <button type="button" id="cancel-btn" class="btn-secondary">← Annuler</button>
+        <button type="submit" class="btn-primary">
+          🎬 <span id="submit-btn-text">Ajouter au journal</span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <footer class="footer"><p>CinéJournal 2026 🎬</p></footer>
+
+  <script src="app.js"></script>
+  <script src="add.js?v=2"></script>
+  <script>
+    function toggleManuel() {
+      const area = document.getElementById('critique-manuel');
+      const isOpen = area.style.display !== 'none';
+      area.style.display = isOpen ? 'none' : 'block';
+      // Sync avec le textarea principal
+      if (!isOpen) {
+        const manualTa = document.getElementById('critique-manuel-text');
+        const mainTa = document.getElementById('critique');
+        if (mainTa && manualTa && mainTa.value) manualTa.value = mainTa.value;
+        if (manualTa) {
+          manualTa.addEventListener('input', () => {
+            if (mainTa) { mainTa.value = manualTa.value; document.getElementById('critique-count').textContent = manualTa.value.length; }
+            const resultEl = document.getElementById('critique-result');
+            if (resultEl) resultEl.style.display = 'block';
+          });
+        }
+      }
+    }
+  </script>
+</body>
+</html>

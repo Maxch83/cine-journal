@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark" data-ambiance="classic">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapman Sports — Tableau de bord</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="sport.css">
+  <script>
+    const savedMode = localStorage.getItem('cinejournal_mode') || 'dark';
+    const savedAmb = localStorage.getItem('cinejournal_ambiance') || 'classic';
+    document.documentElement.setAttribute('data-theme', savedMode);
+    document.documentElement.setAttribute('data-ambiance', savedAmb);
+  </script>
+</head>
+<body class="sport-theme">
+
+  <nav class="sport-nav">
+    <a href="index.html" class="back-hub">← Hub Chapman</a>
+    <div class="sport-logo">Chapman Sports</div>
+  </nav>
+
+  <main class="sport-container">
+
+    <div class="sport-grid">
+      <!-- Section Gauche : Favoris et Raccourcis -->
+      <div>
+        <h2 class="sport-panel-title">⭐️ Mes Clubs</h2>
+        <div class="favorite-clubs">
+          
+          <!-- Carte PSG -->
+          <a href="sport-club.html?q=Paris%20SG&rss=psg" class="club-card" style="background-image: url('https://images.unsplash.com/photo-1518605368461-1ee7c51272fc?auto=format&fit=crop&q=80&w=800');">
+            <div class="club-card-content">
+              <img src="https://www.thesportsdb.com/images/media/team/badge/rwqpsq1473505294.png" alt="PSG" class="club-badge">
+              <h3 class="club-name">Paris Saint-Germain</h3>
+            </div>
+          </a>
+
+          <!-- Carte RCT -->
+          <a href="sport-club.html?q=Toulon&rss=rct" class="club-card" style="background-image: url('https://images.unsplash.com/photo-1544098281-073ea455c1b5?auto=format&fit=crop&q=80&w=800');">
+            <div class="club-card-content">
+              <img src="https://www.thesportsdb.com/images/media/team/badge/vpxuqw1421782297.png" alt="RCT" class="club-badge">
+              <h3 class="club-name">Rugby Club Toulonnais</h3>
+            </div>
+          </a>
+
+        </div>
+
+        <h2 class="sport-panel-title">🏎️ Autres Sports Majeurs</h2>
+        <div class="sport-panel" style="display:flex; gap:1rem; flex-wrap:wrap;">
+          <a href="#" style="padding:1rem 2rem; background:rgba(255,255,255,0.05); border-radius:12px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:0.5rem; border:1px solid rgba(255,255,255,0.1);">🏎 Formule 1</a>
+          <a href="#" style="padding:1rem 2rem; background:rgba(255,255,255,0.05); border-radius:12px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:0.5rem; border:1px solid rgba(255,255,255,0.1);">🏈 NFL</a>
+          <a href="#" style="padding:1rem 2rem; background:rgba(255,255,255,0.05); border-radius:12px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:0.5rem; border:1px solid rgba(255,255,255,0.1);">🏀 NBA</a>
+        </div>
+      </div>
+
+      <!-- Section Droite : L'Équipe RSS Global -->
+      <div>
+        <div class="sport-panel">
+          <h2 class="sport-panel-title">🗞️ Flash Infos L'Équipe</h2>
+          <div id="news-container" class="news-list">
+            <p style="color:var(--text-muted);">Réception des dépêches en cours...</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="sport.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const newsContainer = document.getElementById('news-container');
+      
+      // On teste avec le RSS général émulé (plus de blocage 522 Cloudflare)
+      const articles = await SPORT_API.fetchNews('global');
+      
+      if (articles.length > 0) {
+        newsContainer.innerHTML = articles.slice(0, 8).map(a => {
+          // Extraire l'image si elle existe dans enclousure, sinon utiliser url vide
+          const img = a.enclosure ? a.enclosure.link : a.thumbnail;
+          const imgTag = img ? `<img src="${img}" class="news-thumb" alt="News">` : `<div class="news-thumb" style="background:#333;"></div>`;
+          return `
+            <a href="${a.link}" target="_blank" class="news-item">
+              ${imgTag}
+              <div class="news-content">
+                <h4>${a.title}</h4>
+                <span class="news-date">${new Date(a.pubDate).toLocaleString('fr-FR', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})}</span>
+              </div>
+            </a>
+          `;
+        }).join('');
+      } else {
+        newsContainer.innerHTML = "<p style='color:#e05252;'>Impossible de lire le flux L'Équipe. Veuillez réessayer plus tard.</p>";
+      }
+    });
+  </script>
+</body>
+</html>

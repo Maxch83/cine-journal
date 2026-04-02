@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Film — CinéJournal</title>
+  <meta name="description" content="Critique personnelle d'un film de mon journal cinématographique.">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    const savedMode = localStorage.getItem('cinejournal_mode') || 'dark';
+    const savedAmb = localStorage.getItem('cinejournal_ambiance') || 'classic';
+    document.documentElement.setAttribute('data-theme', savedMode);
+    document.documentElement.setAttribute('data-ambiance', savedAmb);
+  </script>
+</head>
+<body class="detail-page">
+
+  <!-- ── Navbar ── -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo" style="text-decoration:none;" title="Retour au Portail Maxime Chapman">
+      <span class="icon">🎞️</span>
+      CinéJournal
+    </a>
+    <ul class="navbar-nav">
+      <li><a href="films.html">Mes Films</a></li>
+      <li><a href="favoris.html">❤️ Coups de cœur</a></li>
+      <li><a href="stats.html">📊 Statistiques</a></li>
+      <li><a href="settings.html">⚙️ Paramètres</a></li>
+    </ul>
+    <div class="navbar-year">2026</div>
+  </nav>
+
+  <!-- ── Hero Détail ── -->
+  <div class="detail-hero">
+    <div class="detail-hero-bg" id="hero-bg"></div>
+    <div class="detail-hero-overlay"></div>
+    <div class="detail-hero-content">
+
+      <!-- Poster -->
+      <div id="detail-poster-container"></div>
+
+      <!-- Infos -->
+      <div class="detail-info">
+        <a href="films.html" class="detail-back">← Retour aux films</a>
+
+        <div class="detail-tags" id="detail-tags">
+          <!-- Tags dynamiques -->
+        </div>
+
+        <h1 class="detail-title" id="detail-titre">Chargement…</h1>
+        <p class="detail-subtitle" id="detail-sous-titre"></p>
+
+        <div class="detail-meta-row" id="detail-metas">
+          <!-- Métas dynamiques -->
+        </div>
+
+        <!-- Double Note -->
+        <div class="detail-double-note" id="detail-note">
+          <!-- Note dynamique -->
+        </div>
+
+        <!-- Notes Externes (Dynamique) -->
+        <div id="external-ratings" class="external-ratings" style="display:none; margin-top:2rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); gap:1.5rem; align-items:center;">
+          <!-- Dynamique via film.js -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Corps ── -->
+  <div class="detail-body">
+
+    <!-- ── Contexte de visionnage ── -->
+    <div class="detail-context-bar" id="detail-context-bar" style="display:none">
+      <!-- Généré par JS -->
+    </div>
+
+    <!-- ── Galerie d'images ── -->
+    <div id="detail-gallery-section" style="display:none">
+      <div class="section-block gallery-section-block">
+        <h2 class="section-heading">
+          <span class="icon">🖼️</span>
+          Images du film
+        </h2>
+        <div class="gallery-grid" id="gallery-grid">
+          <!-- Généré par JS -->
+        </div>
+        <!-- Lightbox -->
+        <div class="lightbox-overlay" id="lightbox" style="display:none" onclick="closeLightbox()">
+          <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+          <button class="lightbox-prev" id="lb-prev" onclick="event.stopPropagation(); lbMove(-1)">‹</button>
+          <img class="lightbox-img" id="lightbox-img" src="" alt="">
+          <button class="lightbox-next" id="lb-next" onclick="event.stopPropagation(); lbMove(1)">›</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Notes & Critères ── -->
+    <div class="section-block criteres-detail-block" id="detail-criteres-section" style="display:none">
+      <h2 class="section-heading">
+        <span class="icon">📊</span>
+        Mes notes détaillées
+      </h2>
+      <div class="criteres-detail-grid" id="criteres-detail-grid">
+        <!-- Généré par JS -->
+      </div>
+    </div>
+
+    <!-- ── Présentation ── -->
+    <div class="section-block">
+      <h2 class="section-heading">
+        <span class="icon">📖</span>
+        Présentation du film
+      </h2>
+      <p class="synopsis" id="detail-synopsis">Chargement du synopsis…</p>
+      <div class="actors-list" id="detail-acteurs">
+        <!-- Acteurs dynamiques -->
+      </div>
+    </div>
+
+    <!-- ── Ma Critique ── -->
+    <div class="section-block" id="detail-critique-block" style="display:none">
+      <h2 class="section-heading">
+        <span class="icon">✍️</span>
+        Ma Critique
+      </h2>
+      <div class="critique-text" id="detail-critique"></div>
+      <div class="critique-sig">
+        <div class="sig-avatar">🎬</div>
+        <div class="sig-name">
+          <strong class="sig-auteur">Moi</strong>
+          <span>Mon journal de cinéma · 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Critiques Pros (Externes) ── -->
+    <div class="section-block" id="pro-reviews-block" style="display:none">
+      <h2 class="section-heading">
+        <span class="icon">📰</span>
+        Critiques de la communauté / presse
+      </h2>
+      <div id="pro-reviews-container" style="display:flex; flex-direction:column; gap:1.5rem; margin-top:1.5rem;">
+        <!-- Généré dynamiquement par film.js -->
+      </div>
+    </div>
+
+    <!-- ── Actions ── -->
+    <div class="detail-actions-bar">
+      <a id="btn-modifier" href="#" class="btn-secondary">✏️ Modifier ce film</a>
+      <a href="films.html" class="btn-secondary">← Retour</a>
+    </div>
+
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <p>CinéJournal 2026 — Mon journal de cinéma personnel 🎬</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script src="film.js"></script>
+</body>
+</html>

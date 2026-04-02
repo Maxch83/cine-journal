@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark" data-ambiance="scifi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AstroBoard — Maxime Chapman</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    // Par défaut, l'AstroBoard force un peu un aspect très sombre (espace)
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.setAttribute('data-ambiance', 'scifi');
+  </script>
+  <style>
+    /* Spécificités d'AstroBoard - Glassmorphism Spatial */
+    body {
+      background: #000;
+      color: #fff;
+    }
+    #astro-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background-size: cover;
+      background-position: center;
+      background-color: #030308;
+      z-index: -2;
+      transition: background-image 1s ease;
+    }
+    #astro-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.5) 100%);
+      z-index: -1;
+    }
+    
+    .astro-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 1.5rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+    .back-hub {
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 30px;
+      transition: background 0.3s;
+    }
+    .back-hub:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .astro-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+    }
+
+    .astro-container {
+      padding: 8rem 2.5rem 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    /* Layout */
+    .astro-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+    }
+    @media (max-width: 900px) {
+      .astro-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: rgba(10, 10, 15, 0.4);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .panel-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    /* APOD Section */
+    .apod-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .apod-desc {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.8);
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 15px;
+    }
+
+    /* ISS Section */
+    .iss-count {
+      font-size: 5rem;
+      font-weight: 300;
+      line-height: 1;
+      color: #fff;
+    }
+    .iss-people {
+      list-style: none;
+      margin-top: 1.5rem;
+      padding: 0;
+    }
+    .iss-people li {
+      padding: 0.8rem;
+      background: rgba(255,255,255,0.05);
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.95rem;
+    }
+    .iss-people li::before {
+      content: '👨‍🚀';
+      font-size: 1.2rem;
+    }
+
+    /* Loader */
+    .loading-text {
+      color: var(--gold);
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Image de fond APOD -->
+  <div id="astro-bg"></div>
+
+  <nav class="astro-nav">
+    <a href="index.html" class="back-hub">← Hub Chapman</a>
+    <div class="astro-logo">AstroBoard</div>
+  </nav>
+
+  <main class="astro-container">
+    
+    <div class="astro-grid">
+      
+      <!-- NASA APOD -->
+      <div class="glass-panel">
+        <span class="panel-tag">Photo NASA du jour</span>
+        <h1 class="apod-title" id="apod-title"><span class="loading-text">Connexion Télescope...</span></h1>
+        <div id="apod-content">
+          <p class="apod-desc" id="apod-desc">Récupération des données spatiales officielles en cours...</p>
+        </div>
+      </div>
+
+      <!-- ISS Tracking -->
+      <div class="glass-panel">
+        <span class="panel-tag">En orbite (ISS)</span>
+        <h2 style="font-size: 1.5rem; margin-bottom: 1rem; font-weight:400;">Humains dans l'espace</h2>
+        <div class="iss-count" id="iss-count">-</div>
+        <ul class="iss-people" id="iss-people">
+          <li style="opacity:0.5">Recherche des fréquences...</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="astro.js"></script>
+</body>
+</html>

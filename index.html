@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maxime Chapman — Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    const savedMode = localStorage.getItem('cinejournal_mode') || 'dark';
+    const savedAmb = localStorage.getItem('cinejournal_ambiance') || 'classic';
+    document.documentElement.setAttribute('data-theme', savedMode);
+    document.documentElement.setAttribute('data-ambiance', savedAmb);
+  </script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000; /* deep dark fallback */
+    }
+    .hub-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+    }
+    .hub-header {
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .hub-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      color: #fff;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+      margin-bottom: 0.2rem;
+    }
+    .hub-header p {
+      color: rgba(255,255,255,0.8);
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+    .hub-panels {
+      display: flex;
+      flex: 1;
+      width: 100vw;
+    }
+    .hub-panel {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      overflow: hidden;
+      transition: flex 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+      cursor: pointer;
+    }
+    .hub-panel:hover {
+      flex: 1.4;
+    }
+    .hub-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.35) saturate(0.8);
+      transition: filter 0.7s cubic-bezier(0.25, 1, 0.5, 1), transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+      z-index: 1;
+    }
+    .hub-panel:hover::before {
+      filter: brightness(0.65) saturate(1.3);
+      transform: scale(1.05);
+    }
+    /* Images Unsplash premium */
+    .panel-cine::before {
+      background-image: url('https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=2059&ixlib=rb-4.0.3');
+    }
+    .panel-astro::before {
+      background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&q=80&w=2000&ixlib=rb-4.0.3');
+    }
+    .panel-sport::before {
+      background-image: url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&q=80&w=2000&ixlib=rb-4.0.3'); /* Un stade épique */
+    }
+    .panel-content {
+      text-align: center;
+      z-index: 2;
+      padding: 3.5rem 3rem;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.5s;
+      max-width: 400px;
+    }
+    .hub-panel:hover .panel-content {
+      transform: translateY(-15px);
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .panel-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      line-height: 1;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+    }
+    .panel-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      color: #fff;
+      margin-bottom: 0.8rem;
+      letter-spacing: -0.02em;
+    }
+    .panel-desc {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.05rem;
+      line-height: 1.5;
+    }
+    
+    @media (max-width: 768px) {
+      .hub-panels { flex-direction: column; }
+      .hub-header { position: relative; background: #07070e; padding: 2rem 1rem; z-index: 10; }
+      .hub-panel:hover { flex: 1; }
+      .hub-panel:hover .panel-content { transform: none; }
+      .panel-content { padding: 2rem; transform: scale(0.9); }
+    }
+  </style>
+  <script>
+    // Appliquer le thème pour la cohérence globale si nécessaire, même si l'index a ses propres fonds
+    const savedMode = localStorage.getItem('cinejournal_mode') || 'dark';
+    const savedAmb = localStorage.getItem('cinejournal_ambiance') || 'classic';
+    document.documentElement.setAttribute('data-theme', savedMode);
+    document.documentElement.setAttribute('data-ambiance', savedAmb);
+  </script>
+</head>
+<body>
+  <div class="hub-wrapper">
+    <header class="hub-header">
+      <h1>Maxime Chapman</h1>
+      <p>Portail Personnel & Explorations</p>
+    </header>
+    
+    <div class="hub-panels">
+      <!-- CinéJournal -->
+      <a href="films.html" class="hub-panel panel-cine">
+        <div class="panel-content">
+          <div class="panel-icon">🎬</div>
+          <h2 class="panel-title">CinéJournal</h2>
+          <p class="panel-desc">Mes critiques de films, analyses statistiques et archives cinématographiques IA.</p>
+        </div>
+      </a>
+      
+      <!-- AstroBoard -->
+      <a href="astro.html" class="hub-panel panel-astro">
+        <div class="panel-content">
+          <div class="panel-icon">🌌</div>
+          <h2 class="panel-title">AstroBoard</h2>
+          <p class="panel-desc">Suivi en direct de l'espace, ISS et découvertes astronomiques de la NASA.</p>
+        </div>
+      </a>
+
+      <!-- Chapman Sports -->
+      <a href="sport.html" class="hub-panel panel-sport">
+        <div class="panel-content" style="backdrop-filter: blur(8px);">
+          <div class="panel-icon">🏆</div>
+          <h2 class="panel-title">Chapman Sports</h2>
+          <p class="panel-desc">Toute l'actualité sportive en flux continu (L'Équipe), classements et résultats du PSG & RCT.</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

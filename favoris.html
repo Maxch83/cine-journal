@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coups de cœur — CinéJournal</title>
+  <meta name="description" content="Mes films coups de cœur : les films qui m'ont le plus marqué.">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    const savedMode = localStorage.getItem('cinejournal_mode') || 'dark';
+    const savedAmb = localStorage.getItem('cinejournal_ambiance') || 'classic';
+    document.documentElement.setAttribute('data-theme', savedMode);
+    document.documentElement.setAttribute('data-ambiance', savedAmb);
+  </script>
+</head>
+<body class="favoris-page">
+
+  <!-- ── Navbar ── -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo" style="text-decoration:none;" title="Retour au Portail Maxime Chapman">
+      <span class="icon">🎞️</span>
+      CinéJournal
+    </div>
+    <ul class="navbar-nav">
+      <li><a href="films.html">Mes Films</a></li>
+      <li><a href="favoris.html" class="active">❤️ Coups de cœur</a></li>
+      <li><a href="stats.html">📊 Statistiques</a></li>
+      <li><a href="settings.html">⚙️ Paramètres</a></li>
+    </ul>
+    <div class="navbar-year">2026</div>
+  </nav>
+
+  <!-- ── Hero Coups de cœur ── -->
+  <header class="favoris-hero">
+    <div class="favoris-hero-bg">
+      <div class="favoris-particles" id="favoris-particles"></div>
+    </div>
+    <div class="favoris-hero-content">
+      <div class="favoris-hero-badge">
+        <span class="favoris-badge-heart">❤️</span>
+        <span>Films qui m'ont marqué</span>
+      </div>
+      <h1>Mes <span class="favoris-title-accent">Coups</span><br>de Cœur</h1>
+      <p class="favoris-hero-sub">Les films qui ont laissé une empreinte durable — émotions, images, musique ou histoire.</p>
+      <div class="favoris-hero-stat">
+        <span id="favoris-count" class="favoris-count-num">0</span>
+        <span class="favoris-count-label">films coups de cœur</span>
+      </div>
+    </div>
+    <!-- Floating posters en fond -->
+    <div class="favoris-float-posters" id="favoris-float-posters"></div>
+  </header>
+
+  <!-- ── Quote aléatoire ── -->
+  <div class="favoris-quote-bar" id="favoris-quote-bar" style="display:none">
+    <div class="favoris-quote-inner">
+      <span class="favoris-quote-mark">"</span>
+      <p class="favoris-quote-text" id="favoris-quote-text"></p>
+      <span class="favoris-quote-from" id="favoris-quote-from"></span>
+    </div>
+  </div>
+
+  <!-- ── Liste coups de cœur ── -->
+  <main class="favoris-main">
+    <div class="favoris-empty-state" id="favoris-empty" style="display:none">
+      <div class="favoris-empty-icon">💔</div>
+      <h2>Aucun coup de cœur pour l'instant</h2>
+      <p>Ajoute des films et coche "Coup de cœur" pour les voir apparaître ici.</p>
+      <a href="films.html" class="btn-gold">← Voir mes films</a>
+    </div>
+    <div class="favoris-grid" id="favoris-grid">
+      <!-- Généré par JS -->
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <p>CinéJournal 2026 — Mon journal de cinéma personnel 🎬</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script src="favoris.js"></script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark" data-ambiance="classic">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapman Sports — Mon Club</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="sport.css">
+</head>
+<body class="sport-theme">
+
+  <nav class="sport-nav">
+    <a href="sport.html" class="back-hub">← Dashboard Sports</a>
+    <div class="sport-logo" id="header-club-name">Chargement...</div>
+  </nav>
+
+  <main class="sport-container" style="padding-top:1rem;">
+
+    <!-- En-tête du Club -->
+    <div class="club-hero" id="club-hero" style="background-image: url('https://images.unsplash.com/photo-1518605368461-1ee7c51272fc?auto=format&fit=crop&q=80&w=2000');">
+      <div class="club-hero-content">
+        <img src="" alt="" class="club-hero-badge" id="club-hero-badge" style="display:none;">
+        <div class="club-hero-info">
+          <h1 id="club-title">Recherche Data...</h1>
+          <p id="club-subtitle">TheSportsDB Connection</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sport-grid">
+      <!-- Section Gauche : Effectif, Matchs et Classements -->
+      <div>
+        
+        <!-- Derniers Résultats -->
+        <h2 class="sport-panel-title">📅 Derniers Résultats</h2>
+        <div class="sport-panel" style="margin-bottom: 2rem; padding: 1rem;">
+          <div id="matches-container">
+            <p style="color:var(--text-muted); text-align:center;">Récupération des calendriers...</p>
+          </div>
+        </div>
+
+        <!-- Classement -->
+        <h2 class="sport-panel-title">📊 Classement de la Ligue (Top 10)</h2>
+        <div class="sport-panel" style="margin-bottom: 2rem; overflow-x: auto;">
+          <table class="standings-table">
+            <thead>
+              <tr>
+                <th>Pos</th>
+                <th>Équipe</th>
+                <th>M</th>
+                <th>V</th>
+                <th>N</th>
+                <th>D</th>
+                <th>Points</th>
+              </tr>
+            </thead>
+            <tbody id="standings-container">
+              <tr><td colspan="7" style="text-align:center; color:var(--text-muted);">Indisponible ou hors-saison sur TheSportsDB</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Effectif (Roster) -->
+        <h2 class="sport-panel-title">👥 Effectif Pro & Staff</h2>
+        <div class="sport-panel">
+          <div class="roster-grid" id="roster-container">
+            <p style="color:var(--text-muted); text-align:center; grid-column:1/-1;">Téléchargement du trombinoscope...</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Section Droite : News du Club -->
+      <div>
+        <div class="sport-panel">
+          <h2 class="sport-panel-title">🗞️ Actu L'Équipe</h2>
+          <div id="club-news-container" class="news-list">
+            <p style="color:var(--text-muted);">Branchement au flux RSS spécifique...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal notation match -->
+  <div id="rating-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:var(--bg-card,#1a1a2e); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:2rem; max-width:380px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+      <h3 id="rating-modal-title" style="color:#fff; font-size:1.1rem; margin:0 0 0.5rem; font-family:Inter,sans-serif;"></h3>
+      <p style="color:rgba(255,255,255,0.5); font-size:0.85rem; margin:0 0 1.5rem;">Ta note pour ce match (0 → 10)</p>
+      <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+        <input type="range" id="rating-slider" min="0" max="10" step="0.5" value="7"
+          style="flex:1; accent-color:var(--gold,#c8a84b);"
+          oninput="document.getElementById('rating-display').textContent = parseFloat(this.value).toFixed(1)">
+        <span id="rating-display" style="color:var(--gold,#c8a84b); font-weight:700; font-size:1.3rem; min-width:2.5rem; text-align:center;">7.0</span>
+      </div>
+      <div style="display:flex; gap:1rem;">
+        <button onclick="document.getElementById('rating-modal').style.display='none'"
+          style="flex:1; padding:0.75rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; cursor:pointer; font-size:0.9rem;">Annuler</button>
+        <button id="rating-confirm-btn"
+          style="flex:1; padding:0.75rem; background:linear-gradient(135deg,#c8a84b,#f0c060); border:none; border-radius:8px; color:#000; font-weight:700; cursor:pointer; font-size:0.9rem;">⭐ Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="sport.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Pour forcer l'usage du thème local (permet à PSG ou RCT de conserver le thème global Chapman)
+      const savedMode = localStorage.getItem('cinejournal_mode') || 'dark';
+      const savedAmb = localStorage.getItem('cinejournal_ambiance') || 'classic';
+      document.documentElement.setAttribute('data-theme', savedMode);
+      document.documentElement.setAttribute('data-ambiance', savedAmb);
+
+      const params = new URLSearchParams(window.location.search);
+      const teamName = params.get('q');
+      const rssUrl = params.get('rss');
+
+      if (!teamName) {
+        document.getElementById('club-title').textContent = "Erreur: Club non spécifié";
+        return;
+      }
+
+      // 1. Charger les infos du Club via la recherche textuelle
+      const club = await SPORT_API.getClubDetails(teamName);
+      if (club) {
+        const teamId = club.idTeam; // On récupère la vraie ID !
+        document.title = `${club.strTeam} — Chapman Sports`;
+        document.getElementById('header-club-name').textContent = club.strTeam;
+        document.getElementById('club-title').textContent = club.strTeam;
+        const annDebut = club.intFormedYear ? ` • Fondé en ${club.intFormedYear}` : '';
+        const website = club.strWebsite ? ` • <a href="https://${club.strWebsite.replace(/^https?:\/\//,'')}" target="_blank" style="color:var(--gold);">Site Officiel</a>` : '';
+        document.getElementById('club-subtitle').innerHTML = `Stade : ${club.strStadium || 'Inconnu'} • Ligue : ${club.strLeague}${annDebut}${website}`;
+        
+        // Helper de traduction des positions
+        const translatePosition = (pos) => {
+          if(!pos) return 'Joueur';
+          const map = {
+            'Goalkeeper': 'Gardien', 'Keeper': 'Gardien',
+            'Defender': 'Défenseur', 'Centre Back': 'Défenseur Central', 'Left Back': 'Arrière Gauche', 'Right Back': 'Arrière Droit',
+            'Midfielder': 'Milieu', 'Defensive Midfield': 'Milieu Défensif', 'Central Midfield': 'Milieu Central', 'Attacking Midfield': 'Milieu Offensif',
+            'Forward': 'Attaquant', 'Left Winger': 'Ailier Gauche', 'Right Winger': 'Ailier Droit', 'Centre Forward': 'Buteur',
+            'Manager': 'Manager / Coach'
+          };
+          return map[pos] || pos;
+        };
+
+        const badge = document.getElementById('club-hero-badge');
+        if (club.strTeamBadge) {
+          badge.src = club.strTeamBadge;
+          badge.style.display = 'block';
+        }
+
+        if (club.strTeamFanart1) {
+          document.getElementById('club-hero').style.backgroundImage = `url('${club.strTeamFanart1}')`;
+        } else if (club.strStadiumThumb) {
+          document.getElementById('club-hero').style.backgroundImage = `url('${club.strStadiumThumb}')`;
+        }
+        
+        // Ajout d'une section info club détaillée si possible
+        if (club.strDescriptionFR || club.strDescriptionEN) {
+          const descEl = document.createElement('div');
+          descEl.style.padding = '1rem 2rem';
+          descEl.style.color = 'rgba(255,255,255,0.8)';
+          descEl.style.background = 'rgba(0,0,0,0.5)';
+          descEl.style.marginBottom = '2rem';
+          descEl.style.borderRadius = '12px';
+          descEl.innerHTML = `<p><strong>Histoire & Infos :</strong> ${club.strDescriptionFR || club.strDescriptionEN}</p>`;
+          document.getElementById('matches-container').parentElement.parentElement.prepend(descEl);
+        }
+
+        // Classement (si la ligue est dispo et saison courante)
+        if (club.idLeague) {
+          const standings = await SPORT_API.getStandings(club.idLeague, "2023-2024");
+          const tbody = document.getElementById('standings-container');
+          if (standings.length > 0) {
+            tbody.innerHTML = standings.slice(0, 10).map(row => `
+              <tr>
+                <td><strong>${row.intRank}</strong></td>
+                <td class="team-cell">
+                  <img src="${row.strTeamBadge}" alt="badge">
+                  ${row.strTeam}
+                </td>
+                <td>${row.intPlayed}</td>
+                <td>${row.intWin}</td>
+                <td>${row.intDraw}</td>
+                <td>${row.intLoss}</td>
+                <td style="color:var(--gold); font-weight:bold;">${row.intPoints}</td>
+              </tr>
+            `).join('');
+          }
+        }
+
+        // 2. Charger les derniers matchs
+        const matches = await SPORT_API.getLastMatches(teamId);
+        const matchContainer = document.getElementById('matches-container');
+        if (matches.length > 0) {
+          const ratings = getMatchRatings();
+          matchContainer.innerHTML = matches.map(m => {
+            const d = new Date(m.dateEvent || m.strTimestamp).toLocaleDateString('fr-FR');
+            const isHome = m.idHomeTeam === teamId;
+            const myScore = isHome ? m.intHomeScore : m.intAwayScore;
+            const advScore = isHome ? m.intAwayScore : m.intHomeScore;
+            const advName = isHome ? m.strAwayTeam : m.strHomeTeam;
+            
+            let resultColor = '#fff';
+            if (myScore > advScore) resultColor = '#27ae60';
+            if (myScore < advScore) resultColor = '#e74c3c';
+
+            const matchIdStr = m.idEvent;
+            const hasRated = ratings[matchIdStr];
+            
+            return `
+              <div class="match-item">
+                <div class="match-date">${d}</div>
+                <div class="match-teams">
+                  <span class="match-team">${isHome ? club.strTeam : advName}</span>
+                  <span class="match-score" style="color:${resultColor}">${m.intHomeScore} - ${m.intAwayScore}</span>
+                  <span class="match-team">${isHome ? advName : club.strTeam}</span>
+                </div>
+                <div>
+                  ${hasRated 
+                    ? `<span style="color:var(--gold); font-size:0.8rem;">Ma Note : ${hasRated.score}/10</span>`
+                    : `<button class="rate-btn" onclick="rateMatch('${matchIdStr}', '${m.strEvent.replace(/'/g, "\\'")}')">⭐ Noter</button>`
+                  }
+                </div>
+              </div>
+            `;
+          }).join('');
+        } else {
+          matchContainer.innerHTML = "<p style='text-align:center;'>Aucun résultat récent trouvé.</p>";
+        }
+
+        // 3. Charger l'Effectif
+        const players = await SPORT_API.getClubPlayers(teamId);
+        const rosterContainer = document.getElementById('roster-container');
+        if (players.length > 0) {
+          const validPlayers = players.filter(p => p.strThumb || p.strCutout).slice(0, 25);
+          if (validPlayers.length > 0) {
+            rosterContainer.innerHTML = validPlayers.map(p => `
+              <div class="player-card">
+                <img src="${p.strCutout || p.strThumb}" alt="${p.strPlayer}" class="player-img">
+                <div class="player-info">
+                  <div class="player-name">${p.strPlayer}</div>
+                  <div class="player-role">${translatePosition(p.strPosition)}</div>
+                </div>
+              </div>
+            `).join('');
+          } else {
+            rosterContainer.innerHTML = "<p style='grid-column:1/-1;'>Pas de photos d'effectif dispos.</p>";
+          }
+        } else {
+          rosterContainer.innerHTML = "<p style='grid-column:1/-1;'>Effectif non documenté sur cette API gratuite.</p>";
+        }
+
+        // 4. Charger les News RSS ciblées
+        if (rssUrl) {
+          const newsContainer = document.getElementById('club-news-container');
+          const articles = await SPORT_API.fetchNews(rssUrl);
+          if (articles.length > 0) {
+            newsContainer.innerHTML = articles.slice(0, 10).map(a => {
+              const imgTag = a.enclosure ? `<img src="${a.enclosure.link}" class="news-thumb" alt="News">` : `<div class="news-thumb" style="background:#333;"></div>`;
+              return `
+                <a href="${a.link}" target="_blank" class="news-item">
+                  ${imgTag}
+                  <div class="news-content">
+                    <h4>${a.title}</h4>
+                    <span class="news-date">${new Date(a.pubDate).toLocaleString('fr-FR', {day:'2-digit', month:'short'})}</span>
+                  </div>
+                </a>
+              `;
+            }).join('');
+          } else {
+             newsContainer.innerHTML = "<p style='color:var(--text-muted);'>Aucune info en ce moment.</p>";
+          }
+        }
+
+      } else {
+         document.getElementById('club-title').textContent = "Erreur de connexion API TheSportsDB";
+      }
+
+    });
+
+    // Fonction globale pour noter — modal inline
+    window.rateMatch = function(matchId, eventName) {
+      const modal = document.getElementById('rating-modal');
+      const title = document.getElementById('rating-modal-title');
+      const slider = document.getElementById('rating-slider');
+      const display = document.getElementById('rating-display');
+      const confirmBtn = document.getElementById('rating-confirm-btn');
+
+      title.textContent = eventName;
+      slider.value = 7;
+      display.textContent = '7.0';
+      modal.style.display = 'flex';
+
+      confirmBtn.onclick = () => {
+        const val = parseFloat(slider.value);
+        saveMatchRating(matchId, { score: val });
+        modal.style.display = 'none';
+        // Mettre à jour l'UI sans rechargement
+        const btn = document.querySelector(`button[onclick*="${matchId}"]`);
+        if (btn) {
+          const wrapper = btn.parentElement;
+          wrapper.innerHTML = `<span style="color:var(--gold,#c8a84b); font-size:0.8rem;">Ma Note : ${val}/10</span>`;
+        }
+      };
+    };
+  </script>
+</body>
+</html>

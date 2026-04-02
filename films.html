@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CinéJournal 2026 — Mes films</title>
+  <meta name="description" content="Mon journal de bord cinématographique : tous les films vus en 2026, avec mes critiques et impressions personnelles.">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    const savedMode = localStorage.getItem('cinejournal_mode') || 'dark';
+    const savedAmb = localStorage.getItem('cinejournal_ambiance') || 'classic';
+    document.documentElement.setAttribute('data-theme', savedMode);
+    document.documentElement.setAttribute('data-ambiance', savedAmb);
+  </script>
+</head>
+<body>
+
+  <!-- ── Navbar ── -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo" style="text-decoration:none;" title="Retour au Portail Maxime Chapman">
+      <span class="icon">🎞️</span>
+      CinéJournal
+    </a>
+    <ul class="navbar-nav">
+      <li><a href="films.html" class="active">Mes Films</a></li>
+      <li><a href="favoris.html">❤️ Coups de cœur</a></li>
+      <li><a href="stats.html">📊 Statistiques</a></li>
+      <li><a href="settings.html">⚙️ Paramètres</a></li>
+    </ul>
+    <div class="navbar-actions">
+      <button class="btn-edit-mode" id="btn-edit-mode" onclick="toggleModeEdition()">✏️ Gérer</button>
+      <a href="add.html" class="btn-add-film">+ Ajouter un film</a>
+    </div>
+  </nav>
+
+  <!-- ── Modal suppression ── -->
+  <div id="modal-suppr" class="modal-overlay" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+    <div class="modal-box">
+      <div class="modal-icon">🗑️</div>
+      <h3 class="modal-title">Supprimer ce film ?</h3>
+      <p class="modal-desc">Tu es sur le point de supprimer <strong id="modal-suppr-titre"></strong>. Cette action est irréversible.</p>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="btn-suppr-cancel">Annuler</button>
+        <button class="btn-danger" id="btn-suppr-confirm">🗑️ Supprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Hero ── -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-particles"></div>
+    <div class="hero-content">
+      <div class="hero-tag">Journal personnel</div>
+      <h1>Mes <span>Séances</span><br>de cinéma</h1>
+      <p class="hero-sub">Tous les films vus en 2026 — avec mes critiques.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="num" id="stat-nb">0</div>
+          <div class="lbl">Films vus</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num" id="stat-note">—</div>
+          <div class="lbl">Note moy.</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num" id="stat-coup">0</div>
+          <div class="lbl">Coups de ♥</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Filtres ── -->
+  <div class="filters-bar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="search" id="search-input" placeholder="Rechercher un film, réalisateur…" autocomplete="off">
+    </div>
+    <div class="filter-chips" id="genre-chips"></div>
+    <select class="sort-select" id="sort-select" aria-label="Trier les films">
+      <option value="date-desc">📅 Plus récent</option>
+      <option value="date-asc">📅 Plus ancien</option>
+      <option value="note-desc">⭐ Meilleure note</option>
+      <option value="alpha">🔤 Alphabétique</option>
+    </select>
+  </div>
+
+  <!-- ── Grille Films ── -->
+  <main class="films-section">
+    <div class="films-grid" id="films-grid"></div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <p>CinéJournal 2026 — Mon journal de cinéma personnel 🎬</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
