@@ -18,82 +18,278 @@
   <nav class="sport-nav">
     <a href="index.html" class="back-hub">← Hub Chapman</a>
     <div class="sport-logo">Chapman Sports</div>
+    <div style="display:flex;align-items:center;gap:0.8rem;font-size:0.8rem;color:rgba(255,255,255,0.4);">
+      <span id="last-refresh"></span>
+      <button id="refresh-btn" onclick="loadAll()" title="Actualiser"
+        style="background:rgba(255,255,255,0.08);border:none;color:#fff;padding:0.4rem 0.8rem;border-radius:20px;cursor:pointer;font-size:0.8rem;transition:background 0.2s;"
+        onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+        🔄 Actualiser
+      </button>
+    </div>
   </nav>
 
   <main class="sport-container">
 
+    <!-- Mes Clubs -->
+    <h2 class="sport-panel-title">⭐ Mes Clubs</h2>
+    <div class="favorite-clubs" style="margin-bottom:2.5rem;">
+
+      <!-- PSG Card -->
+      <a href="sport-club.html?club=psg" class="club-card"
+        style="background-image: url('https://images.unsplash.com/photo-1518605368461-1ee7c51272fc?auto=format&fit=crop&q=80&w=800');">
+        <div class="club-card-content">
+          <img src="https://a.espncdn.com/i/teamlogos/soccer/500/160.png"
+               onerror="this.src='https://www.thesportsdb.com/images/media/team/badge/rwqpsq1473505294.png'"
+               alt="PSG" class="club-badge">
+          <h3 class="club-name">Paris Saint-Germain</h3>
+          <div id="psg-last-result" style="margin-top:0.4rem;font-size:0.85rem;color:rgba(255,255,255,0.7);">Chargement...</div>
+          <div id="psg-position" style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:0.2rem;"></div>
+        </div>
+      </a>
+
+      <!-- RCT Card -->
+      <a href="sport-club.html?club=rct" class="club-card"
+        style="background-image: url('https://images.unsplash.com/photo-1544098281-073ea455c1b5?auto=format&fit=crop&q=80&w=800');">
+        <div class="club-card-content">
+          <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/5/53/Logo_RC_Toulon_2015.svg/600px-Logo_RC_Toulon_2015.svg.png"
+               alt="RCT" class="club-badge">
+          <h3 class="club-name">Rugby Club Toulonnais</h3>
+          <div id="rct-last-result" style="margin-top:0.4rem;font-size:0.85rem;color:rgba(255,255,255,0.7);">Chargement...</div>
+          <div id="rct-position" style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:0.2rem;"></div>
+        </div>
+      </a>
+
+    </div>
+
     <div class="sport-grid">
-      <!-- Section Gauche : Favoris et Raccourcis -->
+
+      <!-- Colonne gauche : Derniers résultats PSG -->
       <div>
-        <h2 class="sport-panel-title">⭐️ Mes Clubs</h2>
-        <div class="favorite-clubs">
-          
-          <!-- Carte PSG -->
-          <a href="sport-club.html?q=Paris%20SG&rss=psg" class="club-card" style="background-image: url('https://images.unsplash.com/photo-1518605368461-1ee7c51272fc?auto=format&fit=crop&q=80&w=800');">
-            <div class="club-card-content">
-              <img src="https://www.thesportsdb.com/images/media/team/badge/rwqpsq1473505294.png" alt="PSG" class="club-badge">
-              <h3 class="club-name">Paris Saint-Germain</h3>
-            </div>
-          </a>
-
-          <!-- Carte RCT -->
-          <a href="sport-club.html?q=Toulon&rss=rct" class="club-card" style="background-image: url('https://images.unsplash.com/photo-1544098281-073ea455c1b5?auto=format&fit=crop&q=80&w=800');">
-            <div class="club-card-content">
-              <img src="https://www.thesportsdb.com/images/media/team/badge/vpxuqw1421782297.png" alt="RCT" class="club-badge">
-              <h3 class="club-name">Rugby Club Toulonnais</h3>
-            </div>
-          </a>
-
+        <h2 class="sport-panel-title">⚽ PSG — Derniers matchs</h2>
+        <div class="sport-panel" style="margin-bottom:2rem;padding:1rem;" id="psg-matches-panel">
+          <p style="color:var(--text-muted);text-align:center;padding:1rem;">Connexion ESPN...</p>
         </div>
 
-        <h2 class="sport-panel-title">🏎️ Autres Sports Majeurs</h2>
-        <div class="sport-panel" style="display:flex; gap:1rem; flex-wrap:wrap;">
-          <a href="#" style="padding:1rem 2rem; background:rgba(255,255,255,0.05); border-radius:12px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:0.5rem; border:1px solid rgba(255,255,255,0.1);">🏎 Formule 1</a>
-          <a href="#" style="padding:1rem 2rem; background:rgba(255,255,255,0.05); border-radius:12px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:0.5rem; border:1px solid rgba(255,255,255,0.1);">🏈 NFL</a>
-          <a href="#" style="padding:1rem 2rem; background:rgba(255,255,255,0.05); border-radius:12px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:0.5rem; border:1px solid rgba(255,255,255,0.1);">🏀 NBA</a>
+        <h2 class="sport-panel-title">🏉 RCT — Derniers matchs</h2>
+        <div class="sport-panel" style="padding:1rem;" id="rct-matches-panel">
+          <p style="color:var(--text-muted);text-align:center;padding:1rem;">Connexion TheSportsDB...</p>
         </div>
       </div>
 
-      <!-- Section Droite : L'Équipe RSS Global -->
+      <!-- Colonne droite : Actualités -->
       <div>
         <div class="sport-panel">
-          <h2 class="sport-panel-title">🗞️ Flash Infos L'Équipe</h2>
+          <h2 class="sport-panel-title">🗞️ Actu Sport</h2>
+          <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+            <button class="news-tab active" data-tab="all" onclick="switchNewsTab('all',this)"
+              style="flex:1;padding:0.5rem;border:1px solid rgba(255,255,255,0.1);border-radius:8px;background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;font-size:0.8rem;">
+              Tout
+            </button>
+            <button class="news-tab" data-tab="psg" onclick="switchNewsTab('psg',this)"
+              style="flex:1;padding:0.5rem;border:1px solid rgba(0,65,112,0.5);border-radius:8px;background:rgba(0,65,112,0.15);color:#fff;cursor:pointer;font-size:0.8rem;">
+              PSG
+            </button>
+            <button class="news-tab" data-tab="rct" onclick="switchNewsTab('rct',this)"
+              style="flex:1;padding:0.5rem;border:1px solid rgba(218,0,0,0.5);border-radius:8px;background:rgba(218,0,0,0.15);color:#fff;cursor:pointer;font-size:0.8rem;">
+              RCT
+            </button>
+          </div>
           <div id="news-container" class="news-list">
-            <p style="color:var(--text-muted);">Réception des dépêches en cours...</p>
+            <p style="color:var(--text-muted);">Récupération des actualités...</p>
           </div>
         </div>
       </div>
 
     </div>
-
   </main>
+
+  <!-- Modal notation match -->
+  <div id="rating-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:var(--bg-card,#1a1a2e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:2rem;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+      <h3 id="rating-modal-title" style="color:#fff;font-size:1rem;margin:0 0 0.5rem;font-family:Inter,sans-serif;"></h3>
+      <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin:0 0 1.5rem;">Ta note pour ce match (0 → 10)</p>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+        <input type="range" id="rating-slider" min="0" max="10" step="0.5" value="7"
+          style="flex:1;accent-color:var(--gold,#c8a84b);"
+          oninput="document.getElementById('rating-display').textContent=parseFloat(this.value).toFixed(1)">
+        <span id="rating-display" style="color:var(--gold,#c8a84b);font-weight:700;font-size:1.3rem;min-width:2.5rem;text-align:center;">7.0</span>
+      </div>
+      <div style="display:flex;gap:1rem;">
+        <button onclick="document.getElementById('rating-modal').style.display='none'"
+          style="flex:1;padding:0.75rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#fff;cursor:pointer;">Annuler</button>
+        <button id="rating-confirm-btn"
+          style="flex:1;padding:0.75rem;background:linear-gradient(135deg,#c8a84b,#f0c060);border:none;border-radius:8px;color:#000;font-weight:700;cursor:pointer;">⭐ Enregistrer</button>
+      </div>
+    </div>
+  </div>
 
   <script src="sport.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const newsContainer = document.getElementById('news-container');
-      
-      // On teste avec le RSS général émulé (plus de blocage 522 Cloudflare)
-      const articles = await SPORT_API.fetchNews('global');
-      
-      if (articles.length > 0) {
-        newsContainer.innerHTML = articles.slice(0, 8).map(a => {
-          // Extraire l'image si elle existe dans enclousure, sinon utiliser url vide
-          const img = a.enclosure ? a.enclosure.link : a.thumbnail;
-          const imgTag = img ? `<img src="${img}" class="news-thumb" alt="News">` : `<div class="news-thumb" style="background:#333;"></div>`;
-          return `
-            <a href="${a.link}" target="_blank" class="news-item">
-              ${imgTag}
-              <div class="news-content">
-                <h4>${a.title}</h4>
-                <span class="news-date">${new Date(a.pubDate).toLocaleString('fr-FR', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})}</span>
-              </div>
-            </a>
-          `;
-        }).join('');
-      } else {
-        newsContainer.innerHTML = "<p style='color:#e05252;'>Impossible de lire le flux L'Équipe. Veuillez réessayer plus tard.</p>";
+    // ── État ───────────────────────────────────
+    let _newsAll = [], _newsPsg = [], _newsRct = [];
+
+    // ── Chargement principal ───────────────────
+    async function loadAll() {
+      const refreshBtn = document.getElementById('refresh-btn');
+      if (refreshBtn) { refreshBtn.textContent = '⏳'; refreshBtn.disabled = true; }
+
+      try {
+        await Promise.all([loadPSG(), loadRCT(), loadNews()]);
+        markRefreshed();
+      } catch(e) {
+        console.error('loadAll error:', e);
       }
+
+      if (refreshBtn) { refreshBtn.textContent = '🔄 Actualiser'; refreshBtn.disabled = false; }
+    }
+
+    async function loadPSG() {
+      try {
+        const teamId = await ESPN.getTeamId('paris-saint-germain');
+
+        // Standings pour position actuelle
+        const standings = await ESPN.getStandings();
+        const psgRow = standings.find(r => r.name?.toLowerCase().includes('paris') || r.short === 'PSG');
+        if (psgRow) {
+          document.getElementById('psg-position').textContent =
+            `${psgRow.rank}e • Ligue 1 • ${psgRow.points} pts`;
+        }
+
+        // Derniers matchs
+        const matches = await ESPN.getLastMatches(teamId, 5);
+        const ratings = getMatchRatings();
+
+        const lastMatch = matches[0];
+        if (lastMatch) {
+          const rc = lastMatch.result === 'win' ? '#27ae60' : lastMatch.result === 'loss' ? '#e74c3c' : '#f39c12';
+          document.getElementById('psg-last-result').innerHTML =
+            `<span style="color:${rc};font-weight:700;">${lastMatch.homeScore}-${lastMatch.awayScore}</span> vs ${lastMatch.opponent} · ${lastMatch.date}`;
+        }
+
+        const panel = document.getElementById('psg-matches-panel');
+        if (matches.length > 0) {
+          panel.innerHTML = matches.map(m => renderMatchItem(m, teamId, 'PSG', ratings)).join('');
+        } else {
+          panel.innerHTML = `<p style="color:var(--text-muted);text-align:center;padding:1rem;">Aucun résultat disponible</p>`;
+        }
+      } catch(e) {
+        console.error('PSG load error:', e);
+        document.getElementById('psg-last-result').textContent = 'Données indisponibles';
+        document.getElementById('psg-matches-panel').innerHTML =
+          `<p style="color:var(--text-muted);text-align:center;padding:1rem;">⚠️ ESPN API indisponible</p>`;
+      }
+    }
+
+    async function loadRCT() {
+      try {
+        const team = await SPORTSDB.getTeam('Toulon');
+        if (!team) throw new Error('RCT non trouvé');
+
+        const teamId = team.idTeam;
+        const matches = await SPORTSDB.getLastMatches(teamId, 5);
+        const ratings = getMatchRatings();
+
+        // Position (si standings dispo)
+        if (team.idLeague) {
+          try {
+            const table = await SPORTSDB.getStandings(team.idLeague, '2024-2025');
+            const rctRow = table.find(r => r.strTeam?.toLowerCase().includes('toulon'));
+            if (rctRow) {
+              document.getElementById('rct-position').textContent =
+                `${rctRow.intRank}e • Top 14 • ${rctRow.intPoints} pts`;
+            }
+          } catch {}
+        }
+
+        // Dernier match
+        if (matches.length > 0) {
+          const m = matches[0];
+          const isHome = m.idHomeTeam === teamId;
+          const myScore = parseInt(isHome ? m.intHomeScore : m.intAwayScore) || 0;
+          const oppScore = parseInt(isHome ? m.intAwayScore : m.intHomeScore) || 0;
+          const opp = isHome ? m.strAwayTeam : m.strHomeTeam;
+          const rc = myScore > oppScore ? '#27ae60' : myScore < oppScore ? '#e74c3c' : '#f39c12';
+          const d = m.dateEvent ? new Date(m.dateEvent).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : '';
+          document.getElementById('rct-last-result').innerHTML =
+            `<span style="color:${rc};font-weight:700;">${m.intHomeScore}-${m.intAwayScore}</span> vs ${opp} · ${d}`;
+        } else {
+          document.getElementById('rct-last-result').textContent = 'Données TheSportsDB';
+        }
+
+        const panel = document.getElementById('rct-matches-panel');
+        if (matches.length > 0) {
+          panel.innerHTML = matches.map(m => renderSportsdbMatchItem(m, teamId, ratings)).join('');
+        } else {
+          panel.innerHTML = `<p style="color:var(--text-muted);text-align:center;padding:1rem;">Aucun résultat récent</p>`;
+        }
+      } catch(e) {
+        console.error('RCT load error:', e);
+        document.getElementById('rct-last-result').textContent = 'Données indisponibles';
+        document.getElementById('rct-matches-panel').innerHTML =
+          `<p style="color:var(--text-muted);text-align:center;padding:1rem;">⚠️ TheSportsDB indisponible</p>`;
+      }
+    }
+
+    async function loadNews() {
+      try {
+        const [psg, rct] = await Promise.all([
+          fetchGoogleNews(CLUBS_CONFIG.psg.newsQuery, 8),
+          fetchGoogleNews(CLUBS_CONFIG.rct.newsQuery, 8)
+        ]);
+        _newsPsg = psg;
+        _newsRct = rct;
+        // Mélanger et dédupliquer par titre
+        const seen = new Set();
+        _newsAll = [...psg.map(a => ({...a, _club:'psg'})), ...rct.map(a => ({...a, _club:'rct'}))]
+          .filter(a => { if (seen.has(a.title)) return false; seen.add(a.title); return true; })
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
+        renderNews('all');
+      } catch(e) {
+        console.error('News error:', e);
+        document.getElementById('news-container').innerHTML =
+          `<p style="color:var(--text-muted);">Actualités indisponibles</p>`;
+      }
+    }
+
+    function renderNews(tab) {
+      const container = document.getElementById('news-container');
+      const articles = tab === 'psg' ? _newsPsg : tab === 'rct' ? _newsRct : _newsAll;
+      if (!articles.length) {
+        container.innerHTML = `<p style="color:var(--text-muted);">Aucune actualité disponible.</p>`;
+        return;
+      }
+      container.innerHTML = articles.slice(0, 10).map(a => {
+        const icon = (a._club === 'psg' || tab === 'psg') ? '⚽' : (a._club === 'rct' || tab === 'rct') ? '🏉' : '📰';
+        return renderNewsItem(a, icon);
+      }).join('');
+    }
+
+    function switchNewsTab(tab, btn) {
+      document.querySelectorAll('.news-tab').forEach(b => b.style.fontWeight = 'normal');
+      btn.style.fontWeight = '700';
+      renderNews(tab);
+    }
+
+    // ── Notation matchs ────────────────────────
+    window.rateMatch = function(matchId, eventName) {
+      const modal = document.getElementById('rating-modal');
+      document.getElementById('rating-modal-title').textContent = eventName;
+      document.getElementById('rating-slider').value = 7;
+      document.getElementById('rating-display').textContent = '7.0';
+      modal.style.display = 'flex';
+      document.getElementById('rating-confirm-btn').onclick = () => {
+        const val = parseFloat(document.getElementById('rating-slider').value);
+        saveMatchRating(matchId, { score: val });
+        modal.style.display = 'none';
+        const btn = document.querySelector(`button[onclick*="${matchId}"]`);
+        if (btn) btn.parentElement.innerHTML = `<span style="color:var(--gold);font-size:0.8rem;">⭐${val}/10</span>`;
+      };
+    };
+
+    // ── Démarrage ──────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAll();
+      startAutoRefresh(loadAll);
     });
   </script>
 </body>
